@@ -1,0 +1,164 @@
+@import 'bootstrap/dist/css/bootstrap.min.css';
+
+/* Custom Grid Layout for the Registration/Login Pages */
+
+html, body {
+  height: 100%;
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  background-color: #000;
+}
+
+#root {
+  height: 100%;
+}
+
+.page-container {
+  display: grid;
+  place-items: center;
+  min-height: 100vh;
+  position: relative;
+  overflow: hidden;
+}
+
+.bg-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  /* Dark overlay effect */
+  box-shadow: inset 0 0 0 2000px rgba(0, 0, 0, 0.5);
+  z-index: 1;
+  filter: blur(4px);
+  transform: scale(1.05); /* Prevent blur from creating white edges */
+}
+
+.form-wrapper {
+  position: relative;
+  z-index: 10;
+  display: grid;
+  grid-template-columns: 1fr;
+  row-gap: 1.5rem;
+  width: 100%;
+  max-width: 450px;
+  padding: 20px;
+}
+
+.brand-section {
+  text-align: center;
+  color: #fff;
+}
+
+.brand-title {
+  font-family: 'Georgia', serif;
+  font-style: italic;
+  font-size: 2.5rem;
+  color: #d14141; /* Red color matching the mockup */
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.brand-icon {
+  width: 40px;
+  height: 40px;
+  background-color: #d14141;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.brand-subtitle {
+  font-family: 'Georgia', serif;
+  font-size: 1rem;
+  color: #fff;
+  margin-bottom: 2rem;
+}
+
+.form-card {
+  background-color: rgba(61, 38, 36, 0.95); /* Dark translucent brown */
+  border-radius: 12px;
+  padding: 3rem 2.5rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.form-group-custom {
+  margin-bottom: 1.5rem;
+}
+
+.form-label-custom {
+  color: #fff;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+.form-control-custom {
+  background-color: #d1d5db; /* Light gray */
+  border: none;
+  border-radius: 6px;
+  padding: 0.75rem 1rem;
+  width: 100%;
+  color: #333;
+}
+
+.form-control-custom:focus {
+  outline: 2px solid #a53b3b;
+  box-shadow: none;
+}
+
+.custom-checkbox {
+  display: flex;
+  align-items: center;
+  color: #d1d5db;
+  font-size: 0.9rem;
+  margin-bottom: 2rem;
+}
+
+.custom-checkbox input[type="checkbox"] {
+  margin-right: 8px;
+  width: 16px;
+  height: 16px;
+  accent-color: #a53b3b;
+}
+
+.btn-submit {
+  background-color: #a53b3b;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 0.75rem;
+  width: 100%;
+  font-size: 1.1rem;
+  font-weight: 500;
+  transition: background-color 0.2s;
+  cursor: pointer;
+}
+
+.btn-submit:hover {
+  background-color: #8b3030;
+  color: #fff;
+}
+
+.form-footer {
+  text-align: center;
+  margin-top: 1.5rem;
+  color: #fff;
+  font-size: 0.9rem;
+}
+
+.form-footer a {
+  color: #d1d5db;
+  text-decoration: underline;
+  transition: color 0.2s;
+}
+
+.form-footer a:hover {
+  color: #fff;
+}
