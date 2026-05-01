@@ -1,7 +1,8 @@
 import { useState } from 'react';
-import { LoginPage } from './components/login-page';
-import { RegisterPage } from './components/register-page';
-import Home from './components/home-page';
+import { LoginPage } from './pages/login-page';
+import { RegisterPage } from './pages/register-page';
+import Home from "./pages/home-page";
+
 
 
 type Page = 'login' | 'register';
@@ -32,7 +33,7 @@ export default function App() {
       {/*    Register*/}
       {/*  </button>*/}
       {/*</div>*/}
-      <Home/>
+      <Home />
     </div>
   );
 }
