@@ -11,12 +11,13 @@ export function LoginPage() {
   });
 
   const handleSubmit = (e: React.FormEvent) => {
+    console.log('Login submitted:', formData); //replace for https request
     e.preventDefault();
-    console.log('Login submitted:', formData);
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.type === 'checkbox' ? e.target.checked : e.target.value;
+    const value = e.target.type === 'checkbox' ? e.target.checked :
+    e.target.value;
     setFormData({
       ...formData,
       [e.target.name]: value,
@@ -87,7 +88,7 @@ export function LoginPage() {
             </button>
 
             <div className="form-footer">
-              Don't have an account yet? <a href="#">Register</a>
+              Don't have an account yet? <a href="#">Register</a> 
             </div>
           </form>
         </div>
