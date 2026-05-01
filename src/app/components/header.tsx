@@ -1,8 +1,13 @@
 import {Menu, Search, User, X} from "lucide-react";
 import {useState} from "react";
+import {useNavigate} from "react-router";
 
 export function Header() {
+  const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const goToLogin = () => {
+    navigate("/login");
+  }
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border bg-background">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4">
@@ -24,7 +29,10 @@ export function Header() {
             />
             <Search className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           </div>
-          <button className="flex h-9 w-9 items-center justify-center rounded-md hover:bg-accent transition-colors">
+          <button
+            className="flex h-9 w-9 items-center justify-center rounded-md hover:bg-accent transition-colors"
+            onClick={goToLogin}
+          >
             <User className="h-5 w-5 text-foreground" />
           </button>
           <button
