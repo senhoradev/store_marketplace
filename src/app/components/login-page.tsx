@@ -1,23 +1,47 @@
 import { useState } from 'react';
 import { carBackgroundB64 } from '../constants';
+import { authApi } from '../services/api';
 
-const keyIconB64 = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiMzMzMiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cGF0aCBkPSJNMjEgMmwtMiAybS03LjYxIDcuNjFBNS41IDUuNSAwIDAgMCAyLjUgMThjMCAzLjAzIDIuNDcgNS41IDUuNSA1LjVhNS41IDUuNSAwIDAgMCA1LjM5LTMuODlMMjEgOGwyLTItMi0yem0tMTIgN2EyaGFsZiAyaGFsZiAwIDAgMSAwLTVhMmhhbGYgMmhhbGYgMCAwIDEgMCA1eiIvPjwvc3ZnPg==";
+const keyIconB64 =
+  'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiMzMzMiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cGF0aCBkPSJNMjEgMmwtMiAybS03LjYxIDcuNjFBNS41IDUuNSAwIDAgMCAyLjUgMThjMCAzLjAzIDIuNDcgNS41IDUuNSA1LjVhNS41IDUuNSAwIDAgMCA1LjM5LTMuODlMMjEgOGwyLTItMi0yem0tMTIgN2EyaGFsZiAyaGFsZiAwIDAgMSAwLTVhMmhhbGYgMmhhbGYgMCAwIDEgMCA1eiIvPjwvc3ZnPg==';
 
-export function LoginPage() {
+interface LoginPageProps {
+  onNavigateToRegister: () => void;
+  onLoginSuccess: () => void;
+}
+
+export function LoginPage({ onNavigateToRegister, onLoginSuccess }: LoginPageProps) {
   const [formData, setFormData] = useState({
     email: '',
     password: '',
     rememberMe: false,
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
-    console.log('Login submitted:', formData); //replace for https request
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError('');
+    setLoading(true);
+
+    try {
+      const response = await authApi.login({
+        email: formData.email,
+        password: formData.password,
+      });
+
+      authApi.setToken(response.token);
+      onLoginSuccess();
+    } catch (err: any) {
+      setError(err.message || 'Email ou senha inválidos.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.type === 'checkbox' ? e.target.checked :
-    e.target.value;
+    const value = e.target.type === 'checkbox' ? e.target.checked : e.target.value;
     setFormData({
       ...formData,
       [e.target.name]: value,
@@ -26,10 +50,9 @@ export function LoginPage() {
 
   return (
     <div className="page-container">
-      {/* Base64 Encoded Background Image Layer */}
-      <div 
-        className="bg-layer" 
-        style={{ backgroundImage: `url(${carBackgroundB64})` }} 
+      <div
+        className="bg-layer"
+        style={{ backgroundImage: `url(${carBackgroundB64})` }}
       />
 
       <div className="form-wrapper">
@@ -40,13 +63,15 @@ export function LoginPage() {
               <img src={keyIconB64} alt="Store Icon" width="24" height="24" />
             </span>
           </div>
-          <div className="brand-subtitle">Begin your journey</div>
+          <div className="brand-subtitle">Bem-vindo de volta</div>
         </div>
 
         <div className="form-card">
+          {error && <div className="alert alert--error">{error}</div>}
+
           <form onSubmit={handleSubmit}>
             <div className="form-group-custom">
-              <label htmlFor="email" className="form-label-custom">Email Address</label>
+              <label htmlFor="email" className="form-label-custom">Email</label>
               <input
                 type="email"
                 id="email"
@@ -54,12 +79,13 @@ export function LoginPage() {
                 value={formData.email}
                 onChange={handleChange}
                 className="form-control-custom"
+                placeholder="seu@email.com"
                 required
               />
             </div>
 
             <div className="form-group-custom mb-3">
-              <label htmlFor="password" className="form-label-custom">Password</label>
+              <label htmlFor="password" className="form-label-custom">Senha</label>
               <input
                 type="password"
                 id="password"
@@ -67,6 +93,7 @@ export function LoginPage() {
                 value={formData.password}
                 onChange={handleChange}
                 className="form-control-custom"
+                placeholder="••••••••"
                 required
               />
             </div>
@@ -79,16 +106,29 @@ export function LoginPage() {
                   checked={formData.rememberMe}
                   onChange={handleChange}
                 />
-                Remember me
+                Lembrar de mim
               </label>
             </div>
 
-            <button type="submit" className="btn-submit">
-              Sign In
+            <button type="submit" className="btn-submit" disabled={loading}>
+              {loading ? (
+                <span className="btn-spinner" />
+              ) : (
+                'Entrar'
+              )}
             </button>
 
             <div className="form-footer">
-              Don't have an account yet? <a href="#">Register</a> 
+              Ainda não tem conta?{' '}
+              <a
+                href="#"
+                onClick={(e) => {
+                  e.preventDefault();
+                  onNavigateToRegister();
+                }}
+              >
+                Cadastre-se
+              </a>
             </div>
           </form>
         </div>

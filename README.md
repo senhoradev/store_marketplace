@@ -1,42 +1,61 @@
-# Front-End - Instruções de execução
+# MachoCar - Frontend
 
-## Requisitos de software
+Este é o frontend do projeto MachoCar, uma aplicação de revenda de carros desenvolvida com React e Vite. O projeto implementa as telas de login e registro, permitindo tanto o cadastro de usuários comuns quanto de vendedores.
 
-Para que o front-end funcione corretamente, é preciso ter instalado:
+## Como Funciona
 
-- Node.js 18 ou superior
-- npm (vem junto com o Node.js) ou pnpm
+A aplicação foi estruturada focando na experiência do usuário, oferecendo formulários responsivos e integrados com uma API backend (via Node.js/Sequelize). As rotas principais incluem:
 
-> Este projeto usa Vite como bundler e servidor de desenvolvimento. Não há dependência de Webpack ou Gulp neste repositório.
+- **Login**: Autenticação de usuários existentes com suporte a tokens JWT.
+- **Registro**: Criação de novas contas, incluindo a opção para o usuário se registrar como vendedor, que exibe condicionalmente campos adicionais (CPF, data de nascimento, telefone, endereço).
 
-## Instalação de dependências
+A interface utiliza CSS Grid para o layout, garantindo responsividade em diferentes dispositivos, e se comunica com o backend através de chamadas HTTP.
 
-No diretório raiz do projeto, execute:
+## Requisitos de Sistema
+
+Para rodar este projeto, é necessário ter instalado no seu ambiente:
+
+- Node.js (versão 18 ou superior)
+- npm (gerenciador de pacotes padrão do Node.js) ou pnpm
+
+## Como Rodar o Projeto
+
+### 1. Instalação das Dependências
+
+Primeiro, navegue até a raiz do diretório do frontend no seu terminal e execute o comando abaixo para instalar todas as dependências necessárias:
 
 ```bash
 npm install
 ```
 
-Se preferir usar pnpm:
+Caso prefira utilizar o `pnpm`, execute:
 
 ```bash
 pnpm install
 ```
 
-## Como rodar o front-end
+### 2. Configuração do Ambiente
 
-Após instalar as dependências, execute:
+O projeto possui comunicação com uma API backend. Certifique-se de configurar as variáveis de ambiente necessárias. Você pode usar o arquivo `.env` localizado na pasta `src/` como referência (por exemplo, definindo a URL base da API).
+
+### 3. Execução em Modo de Desenvolvimento
+
+Após a instalação das dependências, inicie o servidor de desenvolvimento do Vite:
 
 ```bash
 npm run dev
 ```
 
-Isso inicia o servidor de desenvolvimento do Vite e abre a aplicação em:
+A aplicação ficará disponível e o terminal indicará a URL local. Geralmente será possível acessá-la abrindo o seguinte endereço no seu navegador:
 
 - `http://localhost:5173`
 
-## Comandos úteis
+### 4. Build de Produção (Opcional)
 
-- `npm install`: instala dependências
-- `npm run dev`: inicia o servidor de desenvolvimento
-- `npm run build`: cria a versão de produção
+Se desejar gerar a versão otimizada para produção, execute o seguinte comando:
+
+```bash
+npm run build
+```
+
+Isso criará a pasta correspondente com os arquivos estáticos prontos para deploy.
