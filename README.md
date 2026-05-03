@@ -49,13 +49,3 @@ npm run dev
 A aplicação ficará disponível e o terminal indicará a URL local. Geralmente será possível acessá-la abrindo o seguinte endereço no seu navegador:
 
 - `http://localhost:5173`
-
-### 4. Build de Produção (Opcional)
-
-Se desejar gerar a versão otimizada para produção, execute o seguinte comando:
-
-```bash
-npm run build
-```
-
-Isso criará a pasta correspondente com os arquivos estáticos prontos para deploy.

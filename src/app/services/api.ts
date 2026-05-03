@@ -1,8 +1,7 @@
 // ============================================================
 // API Service — centraliza todas as chamadas HTTP ao backend
 // ============================================================
-// Altere API_BASE_URL para o endereço do seu backend.
-// Em produção, use variáveis de ambiente (import.meta.env.VITE_API_URL).
+
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 

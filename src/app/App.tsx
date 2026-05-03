@@ -77,7 +77,7 @@ export default function App() {
                 Olá, <strong>{user.fullName.split(' ')[0]}</strong>
               </span>
               <span className="dashboard__role-badge">
-                {user.roles?.some((r) => r.name === 'vendedor') ? '🏷️ Vendedor' : '🛒 Comprador'}
+                {user.roles?.some((r) => r.name === 'vendedor') ? 'Vendedor' : 'Comprador'}
               </span>
               <button className="btn-logout" onClick={handleLogout}>
                 Sair
@@ -86,7 +86,7 @@ export default function App() {
           </div>
           <div className="dashboard__content">
             <p style={{ color: '#aaa', textAlign: 'center', marginTop: '4rem' }}>
-              ✅ Login realizado com sucesso! Dashboard em construção...
+              Login realizado com sucesso! Dashboard em construção...
             </p>
           </div>
         </div>
