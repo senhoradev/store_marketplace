@@ -162,3 +162,270 @@ html, body {
 .form-footer a:hover {
   color: #fff;
 }
+
+/* ==============================
+   Register page — wider layout
+   ============================== */
+
+.form-wrapper--register {
+  max-width: 520px;
+}
+
+/* ==============================
+   Two-column row
+   ============================== */
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.form-group--half {
+  min-width: 0; /* prevent overflow */
+}
+
+/* ==============================
+   Select styling (states)
+   ============================== */
+
+select.form-control-custom {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M6 8L1 3h10z' fill='%23666'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 2rem;
+  cursor: pointer;
+}
+
+/* ==============================
+   Seller toggle checkbox
+   ============================== */
+
+.seller-toggle {
+  margin: 1.25rem 0;
+  padding: 1rem;
+  border-radius: 8px;
+  background: rgba(165, 59, 59, 0.12);
+  border: 1px solid rgba(165, 59, 59, 0.3);
+  transition: background 0.3s, border-color 0.3s;
+}
+
+.seller-toggle:has(input:checked) {
+  background: rgba(165, 59, 59, 0.2);
+  border-color: rgba(165, 59, 59, 0.6);
+}
+
+.seller-toggle__label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  color: #fff;
+  font-weight: 500;
+  margin: 0;
+}
+
+.seller-toggle__label input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: #a53b3b;
+  cursor: pointer;
+}
+
+.seller-toggle__text {
+  font-size: 0.95rem;
+}
+
+.seller-toggle__hint {
+  display: block;
+  margin-top: 6px;
+  margin-left: 28px;
+  font-size: 0.8rem;
+  color: #b0a0a0;
+}
+
+/* ==============================
+   Seller address fields (animated)
+   ============================== */
+
+.seller-fields {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+              opacity 0.3s ease,
+              margin 0.3s ease;
+  margin-bottom: 0;
+}
+
+.seller-fields--open {
+  max-height: 220px;
+  opacity: 1;
+  margin-bottom: 0.5rem;
+}
+
+.seller-fields__inner {
+  padding-top: 0.5rem;
+}
+
+.seller-fields__header {
+  color: #d1b8b8;
+  font-size: 0.85rem;
+  font-weight: 500;
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+/* ==============================
+   Alert messages
+   ============================== */
+
+.alert {
+  padding: 0.75rem 1rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  margin-bottom: 1.25rem;
+  animation: alertSlide 0.3s ease;
+}
+
+@keyframes alertSlide {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.alert--error {
+  background-color: rgba(220, 38, 38, 0.15);
+  border: 1px solid rgba(220, 38, 38, 0.4);
+  color: #fca5a5;
+}
+
+.alert--success {
+  background-color: rgba(34, 197, 94, 0.15);
+  border: 1px solid rgba(34, 197, 94, 0.4);
+  color: #86efac;
+}
+
+/* ==============================
+   Loading spinner
+   ============================== */
+
+.btn-submit:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.btn-spinner {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 2.5px solid rgba(255,255,255,0.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ==============================
+   Dashboard (placeholder)
+   ============================== */
+
+.dashboard {
+  min-height: 100vh;
+  background: #111;
+  color: #fff;
+}
+
+.dashboard__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 2rem;
+  background: rgba(61, 38, 36, 0.95);
+  border-bottom: 1px solid rgba(165, 59, 59, 0.3);
+}
+
+.dashboard__brand {
+  font-family: 'Georgia', serif;
+  font-style: italic;
+  color: #d14141;
+  font-size: 1.5rem;
+  margin: 0;
+}
+
+.dashboard__user-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.dashboard__greeting {
+  color: #d1d5db;
+  font-size: 0.95rem;
+}
+
+.dashboard__role-badge {
+  background: rgba(165, 59, 59, 0.2);
+  border: 1px solid rgba(165, 59, 59, 0.4);
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  color: #f0b0b0;
+}
+
+.btn-logout {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.2);
+  color: #d1d5db;
+  padding: 6px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-logout:hover {
+  background: rgba(220, 38, 38, 0.15);
+  border-color: rgba(220, 38, 38, 0.4);
+  color: #fca5a5;
+}
+
+/* ==============================
+   Responsive — stack on mobile
+   ============================== */
+
+@media (max-width: 540px) {
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .form-wrapper--register {
+    max-width: 100%;
+  }
+
+  .form-card {
+    padding: 2rem 1.5rem;
+  }
+
+  .dashboard__header {
+    flex-direction: column;
+    gap: 0.75rem;
+    text-align: center;
+  }
+}
+
+/* ==============================
+   Date input color fix (dark bg)
+   ============================== */
+
+input[type="date"].form-control-custom {
+  color: #333;
+}
+
+input[type="date"].form-control-custom::-webkit-calendar-picker-indicator {
+  filter: invert(0.4);
+  cursor: pointer;
+}
