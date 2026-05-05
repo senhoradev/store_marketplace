@@ -1,0 +1,12 @@
+node_modules
+dist
+.git
+.gitignore
+.gitlab-ci.yml
+.gitlab-ci.yaml
+Dockerfile
+.dockerignore
+docker-compose.yml
+base64_redcar.txt
+README.md
+ATTRIBUTIONS.md
