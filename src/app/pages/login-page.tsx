@@ -1,16 +1,17 @@
 import { useState } from 'react';
 import { carBackgroundB64 } from '../constants';
 import { authApi } from '../services/api';
+import {useNavigate} from "react-router";
 
 const keyIconB64 =
   'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiMzMzMiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cGF0aCBkPSJNMjEgMmwtMiAybS03LjYxIDcuNjFBNS41IDUuNSAwIDAgMCAyLjUgMThjMCAzLjAzIDIuNDcgNS41IDUuNSA1LjVhNS41IDUuNSAwIDAgMCA1LjM5LTMuODlMMjEgOGwyLTItMi0yem0tMTIgN2EyaGFsZiAyaGFsZiAwIDAgMSAwLTVhMmhhbGYgMmhhbGYgMCAwIDEgMCA1eiIvPjwvc3ZnPg==';
 
 interface LoginPageProps {
-  onNavigateToRegister: () => void;
   onLoginSuccess: () => void;
 }
 
-export function LoginPage({ onNavigateToRegister, onLoginSuccess }: LoginPageProps) {
+export function LoginPage({ onLoginSuccess }: LoginPageProps) {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -124,7 +125,7 @@ export function LoginPage({ onNavigateToRegister, onLoginSuccess }: LoginPagePro
                 href="#"
                 onClick={(e) => {
                   e.preventDefault();
-                  onNavigateToRegister();
+                  navigate("/register")
                 }}
               >
                 Cadastre-se

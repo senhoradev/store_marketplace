@@ -6,11 +6,10 @@ const keyIconB64 =
   'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiMzMzMiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cGF0aCBkPSJNMjEgMmwtMiAybS03LjYxIDcuNjFBNS41IDUuNSAwIDAgMCAyLjUgMThjMCAzLjAzIDIuNDcgNS41IDUuNSA1LjVhNS41IDUuNSAwIDAgMCA1LjM5LTMuODlMMjEgOGwyLTItMi0yem0tMTIgN2EyaGFsZiAyaGFsZiAwIDAgMSAwLTVhMmhhbGYgMmhhbGYgMCAwIDEgMCA1eiIvPjwvc3ZnPg==';
 
 interface RegisterPageProps {
-  onNavigateToLogin: () => void;
   onRegisterSuccess: () => void;
 }
 
-export function RegisterPage({ onNavigateToLogin, onRegisterSuccess }: RegisterPageProps) {
+export function RegisterPage({ onRegisterSuccess }: RegisterPageProps) {
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
@@ -297,7 +296,6 @@ export function RegisterPage({ onNavigateToLogin, onRegisterSuccess }: RegisterP
                 href="#"
                 onClick={(e) => {
                   e.preventDefault();
-                  onNavigateToLogin();
                 }}
               >
                 Entrar
