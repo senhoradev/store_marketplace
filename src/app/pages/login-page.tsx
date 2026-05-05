@@ -50,87 +50,98 @@ export function LoginPage({ onLoginSuccess }: LoginPageProps) {
   };
 
   return (
-    <div className="page-container">
+    <div className="min-h-screen w-full relative flex items-center justify-center bg-black">
+      {/* Background */}
       <div
-        className="bg-layer"
+        className="absolute inset-0 bg-cover bg-center blur-sm scale-105"
         style={{ backgroundImage: `url(${carBackgroundB64})` }}
       />
 
-      <div className="form-wrapper">
-        <div className="brand-section">
-          <div className="brand-title">
+      {/* Overlay escuro */}
+      <div className="absolute inset-0 bg-black/60" />
+
+      {/* Conteúdo */}
+      <div className="relative z-10 w-full max-w-md px-4">
+        {/* Brand */}
+        <div className="text-center mb-6">
+          <h1 className="text-4xl font-bold text-red-500 flex items-center justify-center gap-2">
             MACHOCAR
-            <span className="brand-icon">
-              <img src={keyIconB64} alt="Store Icon" width="24" height="24" />
-            </span>
-          </div>
-          <div className="brand-subtitle">Bem-vindo de volta</div>
+            <img src={keyIconB64} alt="icon" className="w-6 h-6" />
+          </h1>
+          <p className="text-gray-300 mt-2">Bem-vindo de volta</p>
         </div>
 
-        <div className="form-card">
-          {error && <div className="alert alert--error">{error}</div>}
+        {/* Card */}
+        <div className="bg-red-900/30 backdrop-blur-lg rounded-2xl p-6 shadow-lg border border-red-500/20">
+          {error && (
+            <div className="bg-red-500/20 text-red-300 p-2 rounded mb-4">
+              {error}
+            </div>
+          )}
 
-          <form onSubmit={handleSubmit}>
-            <div className="form-group-custom">
-              <label htmlFor="email" className="form-label-custom">Email</label>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {/* Email */}
+            <div>
+              <label className="text-sm text-gray-200">Email</label>
               <input
                 type="email"
-                id="email"
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
-                className="form-control-custom"
                 placeholder="seu@email.com"
+                className="w-full mt-1 p-2 rounded bg-gray-200 text-black outline-none"
                 required
               />
             </div>
 
-            <div className="form-group-custom mb-3">
-              <label htmlFor="password" className="form-label-custom">Senha</label>
+            {/* Senha */}
+            <div>
+              <label className="text-sm text-gray-200">Senha</label>
               <input
                 type="password"
-                id="password"
                 name="password"
                 value={formData.password}
                 onChange={handleChange}
-                className="form-control-custom"
                 placeholder="••••••••"
+                className="w-full mt-1 p-2 rounded bg-gray-200 text-black outline-none"
                 required
               />
             </div>
 
-            <div className="custom-checkbox">
-              <label className="d-flex align-items-center mb-0">
-                <input
-                  type="checkbox"
-                  name="rememberMe"
-                  checked={formData.rememberMe}
-                  onChange={handleChange}
-                />
-                Lembrar de mim
-              </label>
+            {/* Checkbox */}
+            <div className="flex items-center gap-2 text-gray-200 text-sm">
+              <input
+                type="checkbox"
+                name="rememberMe"
+                checked={formData.rememberMe}
+                onChange={handleChange}
+              />
+              Lembrar de mim
             </div>
 
-            <button type="submit" className="btn-submit" disabled={loading}>
-              {loading ? (
-                <span className="btn-spinner" />
-              ) : (
-                'Entrar'
-              )}
+            {/* Botão */}
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-red-600 hover:bg-red-700 transition rounded-lg py-2 text-white font-semibold"
+            >
+              {loading ? "Carregando..." : "Entrar"}
             </button>
 
-            <div className="form-footer">
-              Ainda não tem conta?{' '}
+            {/* Footer */}
+            <p className="text-center text-sm text-gray-300">
+              Ainda não tem conta?{" "}
               <a
                 href="#"
                 onClick={(e) => {
                   e.preventDefault();
-                  navigate("/register")
+                  navigate("/register");
                 }}
+                className="underline"
               >
                 Cadastre-se
               </a>
-            </div>
+            </p>
           </form>
         </div>
       </div>
