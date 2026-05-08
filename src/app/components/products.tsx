@@ -1,14 +1,9 @@
 import {Car} from "lucide-react";
+import {Vehicle} from "@/src/app/services/api";
 
 
-const products = [
-  { id: 1, name: "Nome do Carro", type: "CARDS" },
-  { id: 2, name: "Nome do Carro", type: "CARDS" },
-  { id: 3, name: "Nome do Carro", type: "CARDS" },
-  { id: 4, name: "Nome do Carro", type: "CARDS" },
-]
 
-export function ProductGrid() {
+export function ProductGrid({vehicles}: Vehicle[]) {
   return (
     <section id="produtos" className="bg-muted py-12 md:py-16">
       <div className="mx-auto max-w-7xl px-4">
@@ -18,10 +13,10 @@ export function ProductGrid() {
         </div>
 
         <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2">
-          {products.map((product) => (
+          {vehicles.map((vehicle) => (
             <a
-              key={product.id}
-              href={`#produto/${product.id}`}
+              key={vehicle.id}
+              href={`#produto/${vehicle.id}`}
               className="group overflow-hidden rounded-lg border border-black bg-background transition-shadow hover:shadow-lg"
             >
               <div className="relative flex h-48 items-center justify-center border-b border-border bg-muted md:h-56">
@@ -37,8 +32,8 @@ export function ProductGrid() {
 
               <div className="flex items-start justify-between p-4">
                 <div>
-                  <h3 className="font-bold text-foreground uppercase">{product.name}</h3>
-                  <p className="text-sm text-muted-foreground">{product.type}</p>
+                  <h3 className="font-bold text-foreground uppercase">{vehicle.name}</h3>
+                  <p className="text-sm text-muted-foreground">{vehicle.type}</p>
                 </div>
                 <span className="text-xs text-muted-foreground text-right">
                   (REDIRECT PRA<br />PÁGINA DO<br />PRODUTO)
