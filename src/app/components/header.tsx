@@ -1,8 +1,13 @@
 import {Menu, Search, User, X} from "lucide-react";
 import {useState} from "react";
 import {useNavigate} from "react-router";
+import type {UserData} from "@/src/app/services/api";
 
-export function Header() {
+type props = {
+  user: UserData | null;
+}
+
+export function Header({user}: props) {
   const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const goToLogin = () => {
@@ -33,6 +38,7 @@ export function Header() {
             className="flex h-9 w-9 items-center justify-center rounded-md hover:bg-accent transition-colors"
             onClick={goToLogin}
           >
+            <span className="px-3 text-sm">{user ? user.fullName.split(" ")[0] : "Login"}</span>
             <User className="h-5 w-5 text-foreground" />
           </button>
           <button
