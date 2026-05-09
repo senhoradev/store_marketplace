@@ -13,27 +13,27 @@ export function Footer() {
         <div className="grid grid-cols-2 gap-8 md:grid-cols-3 lg:grid-cols-5">
           <div>
             <h3 className="text-sm font-bold text-foreground">{footerLinks.comprar.title}</h3>
-            <ul className="mt-3 space-y-2">{footerLinks.comprar.links.map((link) => (<li key={link}><a href="#" className="text-xs text-muted-foreground hover:text-foreground">• {link}</a></li>))}</ul>
+            <ul className="mt-3 space-y-2">{footerLinks.comprar.links.map((link) => (<li key={link}><a href="#" className="text-xs text-muted-foreground hover:text-foreground">{link}</a></li>))}</ul>
             <h3 className="mt-4 text-sm font-bold text-foreground">{footerLinks.comprar.subTitle}</h3>
-            <ul className="mt-3 space-y-2">{footerLinks.comprar.subLinks.map((link) => (<li key={link}><a href="#" className="text-xs text-muted-foreground hover:text-foreground">• {link}</a></li>))}</ul>
+            <ul className="mt-3 space-y-2">{footerLinks.comprar.subLinks.map((link) => (<li key={link}><a href="#" className="text-xs text-muted-foreground hover:text-foreground">{link}</a></li>))}</ul>
           </div>
           <div>
             <h3 className="text-sm font-bold text-foreground">{footerLinks.assinar.title}</h3>
-            <ul className="mt-3 space-y-2">{footerLinks.assinar.links.map((link) => (<li key={link}><a href="#" className="text-xs text-muted-foreground hover:text-foreground">• {link}</a></li>))}</ul>
+            <ul className="mt-3 space-y-2">{footerLinks.assinar.links.map((link) => (<li key={link}><a href="#" className="text-xs text-muted-foreground hover:text-foreground">{link}</a></li>))}</ul>
             <h3 className="mt-4 text-sm font-bold text-foreground">{footerLinks.assinar.subTitle}</h3>
-            <ul className="mt-3 space-y-2">{footerLinks.assinar.subLinks.map((link) => (<li key={link}><a href="#" className="text-xs text-muted-foreground hover:text-foreground">• {link}</a></li>))}</ul>
+            <ul className="mt-3 space-y-2">{footerLinks.assinar.subLinks.map((link) => (<li key={link}><a href="#" className="text-xs text-muted-foreground hover:text-foreground">{link}</a></li>))}</ul>
           </div>
           <div>
             <h3 className="text-sm font-bold text-foreground">{footerLinks.noticias.title}</h3>
-            <ul className="mt-3 space-y-2">{footerLinks.noticias.links.map((link) => (<li key={link}><a href="#" className="text-xs text-muted-foreground hover:text-foreground">• {link}</a></li>))}</ul>
+            <ul className="mt-3 space-y-2">{footerLinks.noticias.links.map((link) => (<li key={link}><a href="#" className="text-xs text-muted-foreground hover:text-foreground">{link}</a></li>))}</ul>
           </div>
           <div>
             <h3 className="text-sm font-bold text-foreground">{footerLinks.ajuda.title}</h3>
-            <ul className="mt-3 space-y-2">{footerLinks.ajuda.links.map((link) => (<li key={link}><a href="#" className="text-xs text-muted-foreground hover:text-foreground">• {link}</a></li>))}</ul>
+            <ul className="mt-3 space-y-2">{footerLinks.ajuda.links.map((link) => (<li key={link}><a href="#" className="text-xs text-muted-foreground hover:text-foreground">{link}</a></li>))}</ul>
           </div>
           <div>
             <h3 className="text-sm font-bold text-foreground">{footerLinks.institucional.title}</h3>
-            <ul className="mt-3 space-y-2">{footerLinks.institucional.links.map((link) => (<li key={link}><a href="#" className="text-xs text-muted-foreground hover:text-foreground">• {link}</a></li>))}</ul>
+            <ul className="mt-3 space-y-2">{footerLinks.institucional.links.map((link) => (<li key={link}><a href="#" className="text-xs text-muted-foreground hover:text-foreground">{link}</a></li>))}</ul>
           </div>
         </div>
         <div className="mt-10 border-t border-border pt-6 text-center">

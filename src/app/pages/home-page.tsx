@@ -6,7 +6,7 @@ import {Categories} from "../components/categories";
 import {ProductGrid} from "../components/products";
 import {ContactBanner} from "../components/contact-banner";
 import {Footer} from "../components/footer";
-import {Vehicle, vehicleApi, UserData} from "@/src/app/services/api";
+import {Vehicle, vehicleApi, UserData} from "../services/api";
 
 type props = {
   user: UserData | null;

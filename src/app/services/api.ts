@@ -83,6 +83,7 @@ export interface VehicleResponse {
 }
 
 export interface Vehicle {
+  id: string
   title: string;
   description: string;
   price: number;

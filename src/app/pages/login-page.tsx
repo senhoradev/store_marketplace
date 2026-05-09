@@ -50,12 +50,9 @@ export function LoginPage({ onLoginSuccess }: LoginPageProps) {
   };
 
   return (
-    <div className="min-h-screen w-full relative flex items-center justify-center bg-black">
-      {/* Background */}
-      <div
-        className="absolute inset-0 bg-cover bg-center blur-sm scale-105"
-        style={{ backgroundImage: `url(${carBackgroundB64})` }}
-      />
+    <div className="min-h-screen w-full relative flex items-center justify-center bg-black bg-no-repeat bg-cover"
+         style={{ backgroundImage: `url(${carBackgroundB64})` }}
+    >
 
       {/* Overlay escuro */}
       <div className="absolute inset-0 bg-black/60" />

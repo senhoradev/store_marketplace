@@ -2,8 +2,10 @@ import {Car} from "lucide-react";
 import {Vehicle} from "@/src/app/services/api";
 
 
-
-export function ProductGrid({vehicles}: Vehicle[]) {
+type props = {
+  vehicles: Vehicle[]
+}
+export function ProductGrid({vehicles}: props) {
   return (
     <section id="produtos" className="bg-muted py-12 md:py-16">
       <div className="mx-auto max-w-7xl px-4">
@@ -32,8 +34,8 @@ export function ProductGrid({vehicles}: Vehicle[]) {
 
               <div className="flex items-start justify-between p-4">
                 <div>
-                  <h3 className="font-bold text-foreground uppercase">{vehicle.name}</h3>
-                  <p className="text-sm text-muted-foreground">{vehicle.type}</p>
+                  <h3 className="font-bold text-foreground uppercase">{vehicle.title}</h3>
+                  <p className="text-sm text-muted-foreground">{vehicle.bodyType}</p>
                 </div>
                 <span className="text-xs text-muted-foreground text-right">
                   (REDIRECT PRA<br />PÁGINA DO<br />PRODUTO)
