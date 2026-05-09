@@ -7,6 +7,7 @@ const footerLinks = {
 }
 
 export function Footer() {
+  const currentYear = new Date().getFullYear()
   return (
     <footer className="border-t border-border bg-background py-10">
       <div className="mx-auto max-w-7xl px-4">
@@ -37,7 +38,7 @@ export function Footer() {
           </div>
         </div>
         <div className="mt-10 border-t border-border pt-6 text-center">
-          <p className="text-xs text-muted-foreground">© 2024 MachoCar. Todos os direitos reservados.</p>
+          <p className="text-xs text-muted-foreground">© {currentYear} MachoCar. Todos os direitos reservados.</p>
         </div>
       </div>
     </footer>
