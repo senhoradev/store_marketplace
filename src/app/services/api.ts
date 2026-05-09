@@ -176,4 +176,7 @@ export const vehicleApi = {
   getAllVehicles(): Promise<VehicleResponse> {
     return request('/vehicles');
   },
+  filterVehicle(params: URLSearchParams): Promise<VehicleResponse> {
+    return request(`/vehicles?${params}`);
+  }
 }

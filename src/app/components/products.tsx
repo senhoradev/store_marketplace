@@ -3,7 +3,7 @@ import {Vehicle} from "@/src/app/services/api";
 
 
 type props = {
-  vehicles: Vehicle[]
+  vehicles: Vehicle[] | []
 }
 export function ProductGrid({vehicles}: props) {
   return (
@@ -15,7 +15,7 @@ export function ProductGrid({vehicles}: props) {
         </div>
 
         <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2">
-          {vehicles.map((vehicle) => (
+          {vehicles.length > 0 ? (vehicles.map((vehicle) => (
             <a
               key={vehicle.id}
               href={`#produto/${vehicle.id}`}
@@ -42,7 +42,7 @@ export function ProductGrid({vehicles}: props) {
                 </span>
               </div>
             </a>
-          ))}
+          ))) : (<div>Opa. Parece que ainda não temos esse modelo disponível ainda</div>)}
         </div>
 
         <div className="mt-8 text-center">
