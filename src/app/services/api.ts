@@ -75,6 +75,34 @@ export interface AuthResponse {
   user: UserData;
 }
 
+export interface VehicleResponse {
+  page: number;
+  total: number;
+  limit: number;
+  data: Vehicle[] | [];
+}
+
+export interface Vehicle {
+  id: string
+  title: string;
+  description: string;
+  price: number;
+  brand: string;
+  model: string;
+  version: string;
+  manufactureYear: number;
+  modelYear: number;
+  mileage: number;
+  fuel: string;
+  transmission: string;
+  bodyType: string;
+  color: string;
+  doors: number;
+  finalPlate: number;
+  city: string;
+  state: string;
+}
+
 export interface UserData {
   id: number;
   fullName: string;
@@ -143,3 +171,9 @@ export const authApi = {
   removeToken,
   isLoggedIn: () => !!getToken(),
 };
+
+export const vehicleApi = {
+  getAllVehicles(): Promise<VehicleResponse> {
+    return request('/vehicles');
+  },
+}

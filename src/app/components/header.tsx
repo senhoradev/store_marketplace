@@ -30,7 +30,7 @@ export function Header({user}: props) {
             <input
               type="text"
               placeholder="Buscar 'SUV 2010'..."
-              className="h-9 w-48 rounded-md border border-input bg-background px-3 pr-9 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring lg:w-64"
+              className="h-9 w-48 rounded-md border border-ring border-input bg-background px-3 pr-9 text-sm placeholder:text-muted-foreground focus:outline-none  lg:w-64"
             />
             <Search className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           </div>
