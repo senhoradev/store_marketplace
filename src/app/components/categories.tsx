@@ -10,7 +10,11 @@ const categories = [
   { id: 6, name: "Elétrico", description: "Sustentabilidade" },
 ]
 
-export function Categories() {
+type props = {
+  getVehiclesByCategory: Function
+}
+
+export function Categories({getVehiclesByCategory}: props) {
   const [currentIndex, setCurrentIndex] = useState(0)
   const itemsPerPage = 4
 
@@ -29,6 +33,10 @@ export function Categories() {
     currentIndex * itemsPerPage + itemsPerPage
   )
 
+  const handleCategoryParams = (categoryName: string) => {
+    getVehiclesByCategory(categoryName)
+  }
+
   // @ts-ignore
   return (
     <section id="categorias" className="bg-background py-12 md:py-16">
@@ -43,7 +51,8 @@ export function Categories() {
             {visibleCategories.map((category) => (
               <a
                 key={category.id}
-                href={`#catalogo?categoria=${category.name.toLowerCase()}`}
+                href={`#produtos`}
+                onClick={() => handleCategoryParams(category.name)}
                 className="group relative flex h-32 flex-col justify-end overflow-hidden rounded-lg bg-foreground p-4 transition-transform hover:scale-105 md:h-40"
               >
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-black/20" />

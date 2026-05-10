@@ -20,12 +20,20 @@ export default function Home({user}: props) {
 
   }, [])
 
+  const getVehiclesByCategory = async (category: string) => {
+    const urlParams = new URLSearchParams({
+      bodyType: category
+    });
+    const vehicles = await vehicleApi.filterVehicle(urlParams);
+    setVehicles(vehicles.data)
+  }
+
   return (
     <div className="min-h-screen bg-background font-sans antialiased">
       <Header user={user}/>
       <main>
         <Hero />
-        <Categories />
+        <Categories getVehiclesByCategory={getVehiclesByCategory}/>
         <ProductGrid vehicles={vehicles} />
         <ContactBanner />
       </main>
