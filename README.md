@@ -4,7 +4,7 @@ Este é o frontend do projeto MachoCar, uma aplicação de revenda de carros des
 
 ## Como Funciona
 
-A aplicação foi estruturada focando na experiência do usuário, oferecendo formulários responsivos e integrados com uma API backend (via Node.js/Sequelize). As rotas principais incluem:
+A aplicação foi estruturada focando na experiência do usuário, oferecendo formulários responsivos e integrados com uma API backend. As rotas principais incluem:
 
 - **Login**: Autenticação de usuários existentes com suporte a tokens JWT.
 - **Registro**: Criação de novas contas, incluindo a opção para o usuário se registrar como vendedor, que exibe condicionalmente campos adicionais (CPF, data de nascimento, telefone, endereço).
@@ -16,36 +16,57 @@ A interface utiliza CSS Grid para o layout, garantindo responsividade em diferen
 Para rodar este projeto, é necessário ter instalado no seu ambiente:
 
 - Node.js (versão 18 ou superior)
-- npm (gerenciador de pacotes padrão do Node.js) ou pnpm
+- npm ou pnpm
+- Docker e Docker Compose (opcional)
 
-## Como Rodar o Projeto
+## Como Rodar o Projeto Localmente
 
 ### 1. Instalação das Dependências
 
-Primeiro, navegue até a raiz do diretório do frontend no seu terminal e execute o comando abaixo para instalar todas as dependências necessárias:
+Navegue até a raiz do diretório e execute o comando abaixo:
 
 ```bash
 npm install
 ```
 
-Caso prefira utilizar o `pnpm`, execute:
-
-```bash
-pnpm install
-```
-
 ### 2. Configuração do Ambiente
 
-O projeto possui comunicação com uma API backend. Certifique-se de configurar as variáveis de ambiente necessárias. Você pode usar o arquivo `.env` localizado na pasta `src/` como referência (por exemplo, definindo a URL base da API).
+Certifique-se de configurar as variáveis de ambiente necessárias no arquivo `.env`. Você pode usar o arquivo `.env.example` como base.
 
 ### 3. Execução em Modo de Desenvolvimento
 
-Após a instalação das dependências, inicie o servidor de desenvolvimento do Vite:
+Inicie o servidor de desenvolvimento:
 
 ```bash
 npm run dev
 ```
 
-A aplicação ficará disponível e o terminal indicará a URL local. Geralmente será possível acessá-la abrindo o seguinte endereço no seu navegador:
+A aplicação ficará disponível em: `http://localhost:5173`
 
-- `http://localhost:5173`
+## Como Rodar com Docker
+
+O projeto já conta com suporte ao Docker para facilitar o deploy e a execução em diferentes ambientes.
+
+### Utilizando Docker Compose (Recomendado)
+
+Para construir a imagem e iniciar o container automaticamente, execute:
+
+```bash
+docker-compose up -d --build
+```
+
+Isso iniciará o servidor Nginx servindo o build da aplicação na porta **5173**.
+
+### Utilizando Dockerfile Manualmente
+
+Caso deseje buildar a imagem sem o Compose:
+
+1. Build da imagem:
+```bash
+docker build -t car-store-frontend .
+```
+
+2. Execução do container:
+```bash
+docker run -p 5173:80 car-store-frontend
+```
