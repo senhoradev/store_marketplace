@@ -122,7 +122,8 @@ export function LoginPage({ onLoginSuccess }: LoginPageProps) {
               disabled={loading}
               className="w-full bg-red-600 hover:bg-red-700 transition rounded-lg py-2 text-white font-semibold"
             >
-              {loading ? "Carregando..." : "Entrar"}
+              {loading ? "Carregando..." : "Entrar"
+              }
             </button>
 
             {/* Footer */}
