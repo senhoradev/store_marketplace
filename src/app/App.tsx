@@ -3,11 +3,12 @@ import {LoginPage} from './pages/login-page';
 import { RegisterPage } from './pages/register-page';
 import Home from "./pages/home-page";
 import { authApi, type UserData } from './services/api';
-import {Routes, Route} from "react-router";
+import {Routes, Route, Navigate, useNavigate} from "react-router";
 
 
 export default function App() {
   const [user, setUser] = useState<UserData | null>(null);
+  const navigate = useNavigate();
 
   // Ao montar, verifica se já tem token salvo
   useEffect(() => {
@@ -28,6 +29,7 @@ export default function App() {
       .getMe()
       .then((userData) => {
         setUser(userData);
+        navigate('/');
       })
       .catch(() => {
       });
