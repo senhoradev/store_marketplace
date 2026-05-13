@@ -141,7 +141,9 @@ export const authApi = {
 
   /** GET /auth/me — retorna dados do usuário autenticado */
   getMe(): Promise<UserData> {
-    return request<UserData>('/auth/me');
+    return request<UserData>('/auth/me', {
+      method: 'GET',
+    });
   },
 
   /** POST /auth/become-seller */
