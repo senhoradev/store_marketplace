@@ -99,8 +99,35 @@ export interface Vehicle {
   color: string;
   doors: number;
   finalPlate: number;
+  fipePrice?: number;
+  acceptsFinancing?: boolean;
+  acceptsTrade?: boolean;
+  status?: string;
   city: string;
   state: string;
+}
+
+export interface CreateVehiclePayload {
+  title: string;
+  description: string;
+  price: number;
+  brand?: string;
+  model?: string;
+  version?: string;
+  manufactureYear?: number;
+  modelYear?: number;
+  mileage?: number;
+  fuel?: string;
+  transmission?: string;
+  bodyType?: string;
+  color?: string;
+  doors?: number;
+  finalPlate?: number;
+  fipePrice?: number;
+  acceptsFinancing?: boolean;
+  acceptsTrade?: boolean;
+  city?: string;
+  state?: string;
 }
 
 export interface UserData {
@@ -180,5 +207,11 @@ export const vehicleApi = {
   },
   filterVehicle(params: URLSearchParams): Promise<VehicleResponse> {
     return request(`/vehicles?${params}`);
-  }
+  },
+  createVehicle(payload: CreateVehiclePayload): Promise<Vehicle> {
+    return request<Vehicle>('/vehicles', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    });
+  },
 }
