@@ -69,4 +69,9 @@ docker build -t car-store-frontend .
 2. Execução do container:
 ```bash
 docker run -p 5173:80 car-store-frontend
-```
+```
+
+### Pendências na Criação de Anúncio
+- Melhorar tratamento de Erros dos Campos Enum
+- Mostrar função apenas para vendedor
+- Opção de enviar imagens

@@ -10,6 +10,7 @@ type props = {
 export function Header({user}: props) {
   const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const isSeller = user?.roles?.some((r) => r.name === 'vendedor');
   const goToLogin = () => {
     navigate("/login");
   }
@@ -34,6 +35,15 @@ export function Header({user}: props) {
             />
             <Search className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           </div>
+          {isSeller && (
+            <button
+              onClick={() => navigate('/anunciar')}
+              className="hidden sm:flex items-center gap-1.5 h-9 px-4 rounded-md bg-red-600 hover:bg-red-700 transition-colors text-white text-sm font-medium"
+            >
+              + Criar anúncio
+            </button>
+          )}
+          {/* )} */}
           <button
             className="flex h-9 w-9 items-center justify-center rounded-md hover:bg-accent transition-colors"
             onClick={goToLogin}
