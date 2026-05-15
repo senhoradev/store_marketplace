@@ -105,6 +105,7 @@ export interface Vehicle {
   status?: string;
   city: string;
   state: string;
+  images?: string[];
 }
 
 export interface CreateVehiclePayload {

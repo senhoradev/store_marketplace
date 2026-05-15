@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
-import {LoginPage} from './pages/login-page';
-import { RegisterPage } from './pages/register-page';
-import Home from "./pages/home-page";
-import { CreateVehiclePage } from './pages/create-vehicle-page';
+import {LoginPage} from './pages/loginPage';
+import { RegisterPage } from './pages/registerPage';
+import DetailsPage from "./pages/detailsPage";
+import Home from "./pages/homePage";
+import { CreateVehiclePage } from './pages/createVehiclePage';
 import { authApi, type UserData } from './services/api';
 import {Routes, Route, Navigate, useNavigate} from "react-router";
 
@@ -62,6 +63,7 @@ export default function App() {
           user ? <CreateVehiclePage user={user} /> : <Navigate to="/login" replace />
         }
       />
+      <Route path="/details" element={<DetailsPage/>}/>
     </Routes>
   );
 }
