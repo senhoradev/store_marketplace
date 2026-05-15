@@ -1,7 +1,9 @@
 import { ImageGallery } from '../components/ImageGallery'
 import { VehicleDetails } from '../components/VehicleDetails'
 import { SellerCard } from '../components/SellerCard'
-import {Vehicle} from "@/src/app/services/api";
+import {Vehicle, vehicleApi} from "../../app/services/api";
+import {useEffect, useState} from "react";
+import {useParams} from "react-router";
 
 
 const sampleVehicle: Vehicle = {
@@ -57,19 +59,28 @@ const sampleSeller: SellerData = {
   state: 'SP',
 }
 
+
 export default function DetailsPage() {
+  const [vehicle, setVehicle] = useState<Vehicle>(sampleVehicle)
+  const [seller, setSeller] = useState<SellerData>(sampleSeller)
+  const { id } = useParams()
+  useEffect(() => {
+    if (id) {
+      try {
+        vehicleApi.getVehicleById(id)
+          .then((res) => {
+            setVehicle(res)
+          })
+      } catch (e) {
+        <div>Carro não encontrado</div>
+      }
+    }
+
+  }, []);
+
   return (
     <div className="min-h-screen bg-background">
       <main className="container mx-auto px-4 py-8">
-        <nav className="mb-6 text-sm text-muted-foreground">
-          <span className="hover:text-foreground cursor-pointer">Início</span>
-          <span className="mx-2">/</span>
-          <span className="hover:text-foreground cursor-pointer">Carros</span>
-          <span className="mx-2">/</span>
-          <span className="hover:text-foreground cursor-pointer">Honda</span>
-          <span className="mx-2">/</span>
-          <span className="text-foreground">Civic</span>
-        </nav>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2 flex flex-col gap-6">
@@ -78,7 +89,7 @@ export default function DetailsPage() {
               alt={sampleVehicle.title}
             />
 
-            <VehicleDetails vehicle={sampleVehicle} />
+            <VehicleDetails vehicle={vehicle} />
           </div>
 
           <div className="lg:col-span-1">

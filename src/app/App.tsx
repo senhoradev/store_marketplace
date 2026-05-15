@@ -63,7 +63,8 @@ export default function App() {
           user ? <CreateVehiclePage user={user} /> : <Navigate to="/login" replace />
         }
       />
-      <Route path="/details" element={<DetailsPage/>}/>
+      <Route path="/details/:id" element={<DetailsPage />} />
+      <Route path="*" element={<div> página não encontrada </div> } />
     </Routes>
   );
 }
