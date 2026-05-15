@@ -139,7 +139,7 @@ export interface UserData {
   telefone: string;
   state?: string;
   city?: string;
-  roles: { id: number; name: string }[];
+  roles: string[];
 }
 
 export interface BecomeSeller {

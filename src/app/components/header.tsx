@@ -10,7 +10,8 @@ type props = {
 export function Header({user}: props) {
   const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  const isSeller = user?.roles?.some((r) => r.name === 'vendedor');
+
+  const isSeller = user?.roles?.some((r) => r === 'vendedor');
   const goToLogin = () => {
     navigate("/login");
   }
