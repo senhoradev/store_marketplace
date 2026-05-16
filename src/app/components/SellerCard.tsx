@@ -27,7 +27,6 @@ export function SellerCard({ seller }: SellerCardProps) {
       </CardHeader>
 
       <CardContent className="flex flex-col gap-5">
-        {/* Seller Info */}
         <div className="flex items-center gap-4">
           <Avatar className="size-14 border-2 border-border">
             <AvatarFallback className="bg-secondary text-foreground text-lg font-semibold">
@@ -47,7 +46,6 @@ export function SellerCard({ seller }: SellerCardProps) {
 
         <Separator />
 
-        {/* Contact Buttons */}
         <div className="flex flex-col gap-3">
           <Button className="w-full gap-2">
             <Phone className="size-4" />
@@ -59,7 +57,6 @@ export function SellerCard({ seller }: SellerCardProps) {
           </Button>
         </div>
 
-        {/* Security Notice */}
         <div className="flex items-start gap-3 p-3 rounded-lg bg-secondary/50">
           <User className="size-5 text-muted-foreground shrink-0 mt-0.5" />
           <p className="text-xs text-muted-foreground leading-relaxed">

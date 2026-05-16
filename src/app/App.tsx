@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import {LoginPage} from './pages/loginPage';
 import { RegisterPage } from './pages/registerPage';
 import DetailsPage from "./pages/detailsPage";
+import {NotFound} from './pages/NotFound';
 import Home from "./pages/homePage";
 import { CreateVehiclePage } from './pages/createVehiclePage';
 import { authApi, type UserData } from './services/api';
@@ -64,7 +65,14 @@ export default function App() {
         }
       />
       <Route path="/details/:id" element={<DetailsPage />} />
-      <Route path="*" element={<div> página não encontrada </div> } />
+      <Route path="*"
+         element={
+           <NotFound
+             onGoBack={() => navigate(-1)}
+             onGoHome={() => navigate("/")}
+           />
+        }
+      />
     </Routes>
   );
 }

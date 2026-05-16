@@ -45,6 +45,7 @@ Documentação 100% em dia, IPVA 2024 pago. Aceito financiamento e avaliação d
     'https://images.unsplash.com/photo-1619682817481-e994891cd1f5?w=1200&h=800&fit=crop',
     'https://images.unsplash.com/photo-1494976388531-d1058494cdd8?w=1200&h=800&fit=crop',
   ],
+  owner: { fullName: "Grupo 2", id: "123"}
 }
 
 export interface SellerData {
@@ -70,6 +71,7 @@ export default function DetailsPage() {
         vehicleApi.getVehicleById(id)
           .then((res) => {
             setVehicle(res)
+            setSeller({ ...seller, ...res.owner})
           })
       } catch (e) {
         <div>Carro não encontrado</div>
@@ -94,7 +96,7 @@ export default function DetailsPage() {
 
           <div className="lg:col-span-1">
             <div className="sticky top-8">
-              <SellerCard seller={sampleSeller} />
+              <SellerCard seller={seller} />
             </div>
           </div>
         </div>

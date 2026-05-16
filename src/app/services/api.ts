@@ -106,6 +106,7 @@ export interface Vehicle {
   city: string;
   state: string;
   images?: string[];
+  owner: { fullName: string; id: string };
 }
 
 export interface CreateVehiclePayload {
