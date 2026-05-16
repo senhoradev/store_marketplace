@@ -1,5 +1,6 @@
 import { ChevronDown, Heart, LogOut, Menu, Search, User, X } from "lucide-react";
 import { useState } from "react";
+import { useNavigate } from "react-router";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -7,6 +8,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "../components/ui/dropdown-menu";
+import { authApi } from "../../app/services/api";
+import {toast} from "sonner";
 
 export interface UserData {
   fullName: string;
@@ -17,27 +20,37 @@ export interface UserData {
 
 type HeaderProps = {
   user: UserData | null;
-  onLogin?: () => void;
-  onRegister?: () => void;
-  onLogout?: () => void;
-  onProfile?: () => void;
-  onFavorites?: () => void;
-  onCreateAd?: () => void;
 };
 
-export function Header({
-                         user,
-                         onLogin,
-                         onRegister,
-                         onLogout,
-                         onProfile,
-                         onFavorites,
-                         onCreateAd,
-                       }: HeaderProps) {
+export function Header({user}: HeaderProps) {
+  const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const isSeller = user?.roles?.some((r) => r === "vendedor");
 
+  const onCreateAd = () => {
+    navigate("/anunciar")
+  }
+  const onLogin = () => {
+    navigate("/login");
+  }
+
+  const onRegister = () => {
+    navigate("/register");
+  }
+
+  const onProfile = () => {
+    navigate("/profile");
+  }
+
+  const onFavorites = () => {
+    navigate("/favorites");
+  }
+
+  const onLogout = () => {
+    authApi.removeToken()
+    toast.success(<div>Logout realizado com sucesso</div>)
+  }
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border bg-background">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4">
