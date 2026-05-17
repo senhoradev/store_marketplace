@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card'
 import { Button } from '../components/ui/button'
 import { Avatar, AvatarFallback } from '../components/ui/avatar'
 import { Separator } from '../components/ui/separator'
-import {SellerData} from "@/src/app/pages/detailsPage";
+import { SellerData } from "@/src/app/pages/detailsPage";
 
 
 interface SellerCardProps {
@@ -53,7 +53,7 @@ export function SellerCard({ seller }: SellerCardProps) {
           </Button>
           <Button variant="outline" className="w-full gap-2">
             <MessageCircle className="size-4" />
-            Enviar mensagem
+            Comprar veículo
           </Button>
         </div>
 
