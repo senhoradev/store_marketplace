@@ -1,9 +1,10 @@
 import { ImageGallery } from '../components/ImageGallery'
 import { VehicleDetails } from '../components/VehicleDetails'
 import { SellerCard } from '../components/SellerCard'
-import {Vehicle, vehicleApi} from "../../app/services/api";
-import {useEffect, useState} from "react";
-import {useParams} from "react-router";
+import { Header } from '../components/header'
+import { authApi, type UserData, Vehicle, vehicleApi } from "../../app/services/api";
+import { useEffect, useState } from "react";
+import { useParams } from "react-router";
 
 
 const sampleVehicle: Vehicle = {
@@ -62,9 +63,17 @@ const sampleSeller: SellerData = {
 
 
 export default function DetailsPage() {
+  const [user, setUser] = useState<UserData | null>(null)
   const [vehicle, setVehicle] = useState<Vehicle>(sampleVehicle)
   const [seller, setSeller] = useState<SellerData>(sampleSeller)
   const { id } = useParams()
+
+  useEffect(() => {
+    if (authApi.isLoggedIn()) {
+      authApi.getMe().then(setUser).catch(() => setUser(null))
+    }
+  }, [])
+
   useEffect(() => {
     if (id) {
       try {
@@ -77,11 +86,11 @@ export default function DetailsPage() {
         console.log(e)
       }
     }
-
-  }, []);
+  }, [id]);
 
   return (
     <div className="min-h-screen bg-background">
+      <Header user={user} />
       <main className="container mx-auto px-4 py-8">
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
