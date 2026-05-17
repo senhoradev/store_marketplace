@@ -1,22 +1,25 @@
 import {
-  Car,
-  Calendar,
-  Gauge,
-  Fuel,
-  Settings2,
-  Palette,
-  DoorOpen,
-  Hash,
-  Banknote,
   ArrowLeftRight,
+  Banknote,
+  Calendar,
+  Car,
+  DoorOpen,
+  Fuel,
+  Gauge,
+  Hash,
   MapPin,
-  Tag,
+  Palette,
+  Pencil,
+  Settings2,
+  Tag
 } from 'lucide-react'
-import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card'
-import { Badge } from '../components/ui/badge'
-import { Separator } from '../components/ui/separator'
-import { formatCurrency, formatNumber } from '../services/utils'
-import {Vehicle} from "@/src/app/services/api";
+import {Card, CardContent, CardHeader, CardTitle} from '../components/ui/card'
+import {Badge} from '../components/ui/badge'
+import {Separator} from '../components/ui/separator'
+import {formatCurrency, formatNumber} from '../services/utils'
+import {authApi, UserData, Vehicle} from "../../app/services/api";
+import {useEffect, useState} from "react";
+import { useNavigate } from "react-router";
 
 interface VehicleDetailsProps {
   vehicle: Vehicle
@@ -45,6 +48,8 @@ function DetailItem({ icon, label, value }: DetailItemProps) {
 }
 
 export function VehicleDetails({ vehicle }: VehicleDetailsProps) {
+  const [user, setUser] = useState<UserData>()
+  const navigate = useNavigate()
   const {
     title,
     description,
@@ -66,6 +71,7 @@ export function VehicleDetails({ vehicle }: VehicleDetailsProps) {
     acceptsTrade,
     city,
     state,
+    owner
   } = vehicle
 
   const yearDisplay =
@@ -74,12 +80,29 @@ export function VehicleDetails({ vehicle }: VehicleDetailsProps) {
       : manufactureYear || modelYear
 
   const locationDisplay = city && state ? `${city}, ${state}` : city || state
+  useEffect(() => {
+    authApi.getMe()
+      .then((user) => setUser(user))
+  }, []);
+
+  const isOwner: Boolean = user?.id === owner.id
 
   return (
     <Card className="border-border">
       <CardHeader className="gap-4">
         <div className="flex flex-col gap-2">
-          <CardTitle className="text-2xl text-balance">{title}</CardTitle>
+          <div className="flex justify-between gap-2">
+            <CardTitle className="text-2xl text-balance ">{title}</CardTitle>
+            {isOwner && (
+              <button
+                onClick={() => navigate("/anunciar")}
+                className="hidden sm:flex items-center gap-1.5 h-9 px-4 rounded-md bg-primary hover:bg-primary/90 transition-colors text-primary-foreground text-sm font-medium"
+              >
+                <Pencil  className="size-4"/>
+                Editar Anúncio
+              </button>
+            )}
+          </div>
           {(brand || model || version) && (
             <p className="text-muted-foreground text-sm">
               {[brand, model, version].filter(Boolean).join(' ')}

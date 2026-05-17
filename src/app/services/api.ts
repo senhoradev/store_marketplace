@@ -133,7 +133,7 @@ export interface CreateVehiclePayload {
 }
 
 export interface UserData {
-  id: number;
+  id: string;
   fullName: string;
   email: string;
   cpf: string;

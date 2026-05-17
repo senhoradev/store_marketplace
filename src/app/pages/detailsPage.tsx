@@ -74,7 +74,7 @@ export default function DetailsPage() {
             setSeller({ ...seller, ...res.owner})
           })
       } catch (e) {
-        <div>Carro não encontrado</div>
+        console.log(e)
       }
     }
 

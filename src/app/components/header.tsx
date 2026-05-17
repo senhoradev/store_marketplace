@@ -9,7 +9,6 @@ import {
   DropdownMenuTrigger,
 } from "../components/ui/dropdown-menu";
 import { authApi } from "../../app/services/api";
-import {toast} from "sonner";
 
 export interface UserData {
   fullName: string;
@@ -49,7 +48,7 @@ export function Header({user}: HeaderProps) {
 
   const onLogout = () => {
     authApi.removeToken()
-    toast.success(<div>Logout realizado com sucesso</div>)
+    window.location.reload();
   }
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border bg-background">
@@ -76,7 +75,7 @@ export function Header({user}: HeaderProps) {
             <input
               type="text"
               placeholder="Buscar 'SUV 2010'..."
-              className="h-9 w-48 rounded-md border border-input bg-background px-3 pr-9 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary lg:w-64"
+              className="h-9 w-48 rounded-md border border-ring bg-background px-3 pr-9 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary lg:w-64"
             />
             <Search className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           </div>
@@ -127,7 +126,7 @@ export function Header({user}: HeaderProps) {
             <div className="hidden sm:flex items-center gap-2">
               <button
                 onClick={onLogin}
-                className="flex items-center gap-1.5 h-9 px-4 rounded-md text-sm font-medium text-foreground hover:bg-accent transition-colors"
+                className="flex items-center gap-1.5 h-9 px-4 rounded-md border border-ring text-sm font-medium text-foreground hover:bg-accent transition-colors"
               >
                 Entrar
               </button>
