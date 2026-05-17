@@ -5,6 +5,7 @@ import DetailsPage from "./pages/detailsPage";
 import {NotFound} from './pages/NotFound';
 import Home from "./pages/homePage";
 import { CreateVehiclePage } from './pages/createVehiclePage';
+import { ProfilePage } from './pages/profilePage';
 import { authApi, type UserData } from './services/api';
 import {Routes, Route, Navigate, useNavigate} from "react-router";
 
@@ -65,6 +66,12 @@ export default function App() {
         }
       />
       <Route path="/details/:id" element={<DetailsPage />} />
+      <Route
+        path="/profile"
+        element={
+          user ? <ProfilePage /> : <Navigate to="/login" replace />
+        }
+      />
       <Route path="*"
          element={
            <NotFound
