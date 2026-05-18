@@ -99,12 +99,41 @@ export interface Vehicle {
   color: string;
   doors: number;
   finalPlate: number;
+  fipePrice?: number;
+  acceptsFinancing?: boolean;
+  acceptsTrade?: boolean;
+  status?: string;
   city: string;
   state: string;
+  images?: string[];
+  owner: { fullName: string; id: string };
+}
+
+export interface CreateVehiclePayload {
+  title: string;
+  description: string;
+  price: number;
+  brand?: string;
+  model?: string;
+  version?: string;
+  manufactureYear?: number;
+  modelYear?: number;
+  mileage?: number;
+  fuel?: string;
+  transmission?: string;
+  bodyType?: string;
+  color?: string;
+  doors?: number;
+  finalPlate?: number;
+  fipePrice?: number;
+  acceptsFinancing?: boolean;
+  acceptsTrade?: boolean;
+  city?: string;
+  state?: string;
 }
 
 export interface UserData {
-  id: number;
+  id: string;
   fullName: string;
   email: string;
   cpf: string;
@@ -112,7 +141,7 @@ export interface UserData {
   telefone: string;
   state?: string;
   city?: string;
-  roles: { id: number; name: string }[];
+  roles: string[];
 }
 
 export interface BecomeSeller {
@@ -178,7 +207,18 @@ export const vehicleApi = {
   getAllVehicles(): Promise<VehicleResponse> {
     return request('/vehicles');
   },
+
+  getVehicleById(id: string): Promise<Vehicle> {
+    return request(`/vehicles/${id}`)
+  },
+
   filterVehicle(params: URLSearchParams): Promise<VehicleResponse> {
     return request(`/vehicles?${params}`);
-  }
+  },
+  createVehicle(payload: CreateVehiclePayload): Promise<Vehicle> {
+    return request<Vehicle>('/vehicles', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    });
+  },
 }

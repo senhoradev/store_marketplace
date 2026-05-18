@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { carBackgroundB64 } from '../constants';
 import { authApi, type RegisterPayload } from '../services/api';
-import {useNavigate} from "react-router";
+import { useNavigate } from "react-router";
 
 const keyIconB64 =
   'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiMzMzMiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cGF0aCBkPSJNMjEgMmwtMiAybS03LjYxIDcuNjFBNS41IDUuNSAwIDAgMCAyLjUgMThjMCAzLjAzIDIuNDcgNS41IDUuNSA1LjVhNS41IDUuNSAwIDAgMCA1LjM5LTMuODlMMjEgOGwyLTItMi0yem0tMTIgN2EyaGFsZiAyaGFsZiAwIDAgMSAwLTVhMmhhbGYgMmhhbGYgMCAwIDEgMCA1eiIvPjwvc3ZnPg==';
@@ -42,25 +42,25 @@ export function RegisterPage({ onRegisterSuccess }: RegisterPageProps) {
         cpf: formData.cpf,
         birthDate: formData.birthDate,
         telefone: formData.telefone,
+        state: formData.state || undefined,
+        city: formData.city || undefined,
       };
 
-      if (formData.wantToBeSeller) {
-        payload.state = formData.state;
-        payload.city = formData.city;
-      }
+      // register retorna { message, user } — sem token
+      await authApi.register(payload);
 
-      const response = await authApi.register(payload);
-      authApi.setToken(response.token);
+      // Login automático para obter o token
+      const loginResponse = await authApi.login({
+        email: formData.email,
+        password: formData.password,
+      });
+      authApi.setToken(loginResponse.token);
 
       if (formData.wantToBeSeller) {
-        try {
-          await authApi.becomeSeller({
-            state: formData.state,
-            city: formData.city,
-          });
-        } catch (sellerErr: any) {
-          console.warn('Registered but become-seller failed:', sellerErr.message);
-        }
+        await authApi.becomeSeller({
+          state: formData.state,
+          city: formData.city,
+        });
       }
 
       setSuccessMsg('Conta criada com sucesso!');
@@ -98,7 +98,7 @@ export function RegisterPage({ onRegisterSuccess }: RegisterPageProps) {
 
   return (
     <div className="min-h-screen w-full relative flex items-center justify-center bg-black bg-no-repeat bg-cover"
-         style={{ backgroundImage: `url(${carBackgroundB64})` }}>
+      style={{ backgroundImage: `url(${carBackgroundB64})` }}>
 
       {/* Overlay escuro */}
       <div className="absolute inset-0 bg-black/60" />
@@ -244,9 +244,45 @@ export function RegisterPage({ onRegisterSuccess }: RegisterPageProps) {
                     required
                   >
                     <option value="">Estado</option>
-                    <option value="SE">SE</option>
-                    <option value="SP">SP</option>
+                    <option value="AC">AC</option>
+                    <option value="AL">AL</option>
+                    <option value="AP">AP</option>
+                    <option value="AM">AM</option>
+                    <option value="BA">BA</option>
+                    <option value="CE">CE</option>
+                    <option value="DF">DF</option>
+                    <option value="ES">ES</option>
+                    <option value="GO">GO</option>
+                    <option value="MA">MA</option>
+                    <option value="MT">MT</option>
+                    <option value="MS">MS</option>
+                    <option value="MG">MG</option>
+                    <option value="PA">PA</option>
+                    <option value="PB">PB</option>
+                    <option value="PR">PR</option>
+                    <option value="PE">PE</option>
+                    <option value="PI">PI</option>
                     <option value="RJ">RJ</option>
+                    <option value="RN">RN</option>
+                    <option value="RS">RS</option>
+                    <option value="RO">RO</option>
+                    <option value="RR">RR</option>
+                    <option value="SC">SC</option>
+                    <option value="SP">SP</option>
+                    <option value="SE">SE</option>
+                    <option value="TO">TO</option>
+                    <option value="MG">MG</option>
+                    <option value="RJ">RJ</option>
+                    <option value="BA">BA</option>
+                    <option value="DF">DF</option>
+                    <option value="PA">PA</option>
+                    <option value="PR">PR</option>
+                    <option value="PE">PE</option>
+                    <option value="RS">RS</option>
+                    <option value="SC">SC</option>
+                    <option value="SP">SP</option>
+                    <option value="SE">SE</option>
+                    <option value="TO">TO</option>
                   </select>
 
                   <input
