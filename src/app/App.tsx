@@ -1,8 +1,11 @@
 import { useState, useEffect } from 'react';
-import {LoginPage} from './pages/login-page';
-import { RegisterPage } from './pages/register-page';
-import Home from "./pages/home-page";
-import { CreateVehiclePage } from './pages/create-vehicle-page';
+import {LoginPage} from './pages/loginPage';
+import { RegisterPage } from './pages/registerPage';
+import DetailsPage from "./pages/detailsPage";
+import {NotFound} from './pages/NotFound';
+import Home from "./pages/homePage";
+import { CreateVehiclePage } from './pages/createVehiclePage';
+import { ProfilePage } from './pages/profilePage';
 import { authApi, type UserData } from './services/api';
 import {Routes, Route, Navigate, useNavigate} from "react-router";
 
@@ -60,6 +63,21 @@ export default function App() {
         path="/anunciar"
         element={
           user ? <CreateVehiclePage user={user} /> : <Navigate to="/login" replace />
+        }
+      />
+      <Route path="/details/:id" element={<DetailsPage />} />
+      <Route
+        path="/profile"
+        element={
+          user ? <ProfilePage /> : <Navigate to="/login" replace />
+        }
+      />
+      <Route path="*"
+         element={
+           <NotFound
+             onGoBack={() => navigate(-1)}
+             onGoHome={() => navigate("/")}
+           />
         }
       />
     </Routes>

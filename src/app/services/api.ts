@@ -105,6 +105,8 @@ export interface Vehicle {
   status?: string;
   city: string;
   state: string;
+  images?: string[];
+  owner: { fullName: string; id: string };
 }
 
 export interface CreateVehiclePayload {
@@ -131,7 +133,7 @@ export interface CreateVehiclePayload {
 }
 
 export interface UserData {
-  id: number;
+  id: string;
   fullName: string;
   email: string;
   cpf: string;
@@ -205,6 +207,11 @@ export const vehicleApi = {
   getAllVehicles(): Promise<VehicleResponse> {
     return request('/vehicles');
   },
+
+  getVehicleById(id: string): Promise<Vehicle> {
+    return request(`/vehicles/${id}`)
+  },
+
   filterVehicle(params: URLSearchParams): Promise<VehicleResponse> {
     return request(`/vehicles?${params}`);
   },

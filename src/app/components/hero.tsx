@@ -1,11 +1,23 @@
-import carHero from "../../images/main-page/hero-image.jpg"
+import videoHero from "../../videos/carvideo.webm"
 
-export function Hero () {
+export function Hero() {
     return (
-        <section className="relative bg-muted bg-no-repeat bg-cover bg-center" style={{ backgroundImage: `url(${carHero})` }}>
-            <div className="mx-auto max-w-7xl px-4 py-12 md:py-20 bg-cover bg-center">
-                <div className="flex flex-col  items-center gap-8 md:flex-row md:justify-between">
-                    <div className="max-w-md text-center  md:text-left">
+        <section className="relative bg-muted overflow-hidden">
+            <video
+                autoPlay
+                loop
+                muted
+                playsInline
+                className="absolute inset-0 w-full h-full object-cover"
+            >
+                <source src={videoHero} type="video/webm" />
+            </video>
+            {/* Overlay to improve text contrast */}
+            <div className="absolute inset-0 bg-black/40"></div>
+
+            <div className="relative z-10 mx-auto max-w-7xl px-4 py-12 md:py-20">
+                <div className="flex flex-col items-center gap-8 md:flex-row md:justify-between">
+                    <div className="max-w-md text-center md:text-left">
                         <h1 className="text-3xl text-white font-bold uppercase leading-tight text-foreground md:text-4xl lg:text-5xl text-balance">
                             A loja para realizar seus sonhos
                         </h1>

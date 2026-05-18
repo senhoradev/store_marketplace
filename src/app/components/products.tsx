@@ -1,5 +1,6 @@
 import {Car} from "lucide-react";
 import {Vehicle} from "@/src/app/services/api";
+import { Link } from "react-router";
 
 
 type props = {
@@ -16,9 +17,9 @@ export function ProductGrid({vehicles}: props) {
 
         <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2">
           {vehicles.length > 0 ? (vehicles.map((vehicle) => (
-            <a
+            <Link
               key={vehicle.id}
-              href={`#produto/${vehicle.id}`}
+              to={`details/${vehicle.id}`}
               className="group overflow-hidden rounded-lg border border-black bg-background transition-shadow hover:shadow-lg"
             >
               <div className="relative flex h-48 items-center justify-center border-b border-border bg-muted md:h-56">
@@ -41,7 +42,7 @@ export function ProductGrid({vehicles}: props) {
                   (REDIRECT PRA<br />PÁGINA DO<br />PRODUTO)
                 </span>
               </div>
-            </a>
+            </Link>
           ))) : (<div>Opa. Parece que ainda não temos esse modelo disponível ainda</div>)}
         </div>
 
