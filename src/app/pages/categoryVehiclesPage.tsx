@@ -1,4 +1,8 @@
 import { useParams } from "react-router";
+import {useState} from "react";
+import {Header } from '../components/header'
+import { Footer } from '../components/footer'
+import { UserData } from "../services/api"
 
 type Car = {
     id: number;
@@ -149,7 +153,7 @@ const cars: Car[] = [
 
 export function CategoryCarsPage() {
     const {category }= useParams();
-
+    const [user, setUser] = useState<UserData | null>(null)
 
 
     const filteredCars = cars.filter(
@@ -157,25 +161,28 @@ export function CategoryCarsPage() {
     );
 
     return (
-        <main className="min-h-screen bg-gray-100 px-8 py-6">
-            <h1 className="mb-2 text-4xl font-bold text-gray-800">
-                Carros da categoria: {category}
-            </h1>
+      <div className="flex flex-col bg-background">
+          <Header user={user} />
 
-            <p className="mb-6 text-gray-600">
-                {filteredCars.length} anúncios encontrados
-            </p>
+          <main className="flex-1 bg-gray-100 px-8 py-6">
+              <h1 className="mb-2 text-4xl font-bold text-gray-800">
+                  Carros da categoria: {category}
+              </h1>
 
-            <section className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-                {filteredCars.map((car) => (
+              <p className="mb-6 text-gray-600">
+                  {filteredCars.length} anúncios encontrados
+              </p>
+
+              <section className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+                  {filteredCars.map((car) => (
                     <div
-                        key={car.id}
-                        className="rounded-lg bg-white p-3 shadow-sm"
+                      key={car.id}
+                      className="rounded-lg bg-white p-3 shadow-sm"
                     >
                         <img
-                            src={car.image}
-                            alt={car.name}
-                            className="h-48 w-full rounded-md object-cover"
+                          src={car.image}
+                          alt={car.name}
+                          className="h-48 w-full rounded-md object-cover"
                         />
 
                         <div className="mt-4">
@@ -183,9 +190,13 @@ export function CategoryCarsPage() {
                 Oferta destaque
               </span>
 
-                            <h2 className="mt-3 font-bold text-gray-800">{car.name}</h2>
+                            <h2 className="mt-3 font-bold text-gray-800">
+                                {car.name}
+                            </h2>
 
-                            <p className="text-sm text-gray-500">{car.model}</p>
+                            <p className="text-sm text-gray-500">
+                                {car.model}
+                            </p>
 
                             <div className="mt-3 flex gap-3 text-sm text-gray-500">
                                 <span>{car.year}</span>
@@ -193,7 +204,9 @@ export function CategoryCarsPage() {
                             </div>
 
                             {car.location && (
-                                <p className="mt-2 text-sm text-gray-500">{car.location}</p>
+                              <p className="mt-2 text-sm text-gray-500">
+                                  {car.location}
+                              </p>
                             )}
 
                             <p className="mt-4 text-xl font-bold text-gray-900">
@@ -205,8 +218,11 @@ export function CategoryCarsPage() {
                             </button>
                         </div>
                     </div>
-                ))}
-            </section>
-        </main>
+                  ))}
+              </section>
+          </main>
+
+          <Footer />
+      </div>
     );
 }

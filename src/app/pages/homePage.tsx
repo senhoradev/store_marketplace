@@ -32,7 +32,7 @@ export default function Home({user}: props) {
       <Header user={user}/>
       <main>
         <Hero />
-        <Categories getVehiclesByCategory={getVehiclesByCategory}/>
+        <Categories />
         <ProductGrid vehicles={vehicles} />
         <ContactBanner />
       </main>
