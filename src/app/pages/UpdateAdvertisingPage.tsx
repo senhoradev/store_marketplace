@@ -1,8 +1,8 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router';
+import {useEffect, useState} from 'react';
+import { useNavigate, useParams } from 'react-router';
 import { Header } from '../components/header';
 import { Footer } from '../components/footer';
-import { vehicleApi, type CreateVehiclePayload, type UserData } from '../services/api';
+import {vehicleApi, UpdateVehiclePayload, UserData} from '../services/api';
 
 type Props = {
   user: UserData | null;
@@ -17,7 +17,8 @@ const STATES_BR = [
   'RS','RO','RR','SC','SP','SE','TO',
 ];
 
-const initialForm: CreateVehiclePayload = {
+const initialForm: UpdateVehiclePayload = {
+  id: '',
   title: '',
   description: '',
   price: 0,
@@ -40,11 +41,19 @@ const initialForm: CreateVehiclePayload = {
   state: '',
 };
 
-export function CreateVehiclePage({ user }: Props) {
+export function UpdateAdvertisingPage({ user }: Props) {
+  const { id } = useParams();
   const navigate = useNavigate();
-  const [form, setForm] = useState<CreateVehiclePayload>(initialForm);
+  const [form, setForm] = useState<UpdateVehiclePayload>(initialForm);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+
+  useEffect(() => {
+    if (id) {
+      vehicleApi.getVehicleById(id)
+        .then((vehicle) => setForm(vehicle) )
+    }
+  }, []);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -57,8 +66,8 @@ export function CreateVehiclePage({ user }: Props) {
         type === 'checkbox'
           ? target.checked
           : type === 'number'
-          ? value === '' ? undefined : Number(value)
-          : value,
+            ? value === '' ? undefined : Number(value)
+            : value,
     }));
   };
 
@@ -67,10 +76,12 @@ export function CreateVehiclePage({ user }: Props) {
     setError('');
     setLoading(true);
     try {
-      await vehicleApi.createVehicle(form);
-      navigate('/');
+      if(id) {
+        await vehicleApi.updateVehicle(form, id);
+        navigate(-1);
+      }
     } catch (err: any) {
-      setError(err.message || 'Erro ao criar anúncio.');
+      setError(err.message || 'Erro ao editar anúncio.');
     } finally {
       setLoading(false);
     }
@@ -81,8 +92,8 @@ export function CreateVehiclePage({ user }: Props) {
       <Header user={user} />
 
       <main className="flex-1 mx-auto w-full max-w-3xl px-4 py-10">
-        <h1 className="text-2xl font-bold text-foreground mb-1">Criar anúncio</h1>
-        <p className="text-sm text-muted-foreground mb-8">Preencha as informações do veículo que deseja anunciar.</p>
+        <h1 className="text-2xl font-bold text-foreground mb-1">Editar anúncio</h1>
+        <p className="text-sm text-muted-foreground mb-8">Preencha as informações do veículo que deseja editar.</p>
 
         {error && (
           <div className="bg-red-500/10 border border-red-500/30 text-red-600 rounded-lg p-3 mb-6 text-sm">
@@ -287,7 +298,7 @@ export function CreateVehiclePage({ user }: Props) {
               disabled={loading}
               className="px-6 py-2 rounded-lg bg-red-600 hover:bg-red-700 transition-colors text-white text-sm font-semibold disabled:opacity-60"
             >
-              {loading ? 'Publicando...' : 'Publicar anúncio'}
+              {loading ? 'Publicando...' : 'Editar anúncio'}
             </button>
           </div>
 
