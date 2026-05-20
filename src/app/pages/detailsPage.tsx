@@ -5,6 +5,7 @@ import { Header } from '../components/header'
 import { authApi, type UserData, Vehicle, vehicleApi } from "../../app/services/api";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router";
+import {Footer} from "../components/footer";
 
 
 const sampleVehicle: Vehicle = {
@@ -89,17 +90,15 @@ export default function DetailsPage() {
   }, [id]);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="bg-background">
       <Header user={user} />
       <main className="container mx-auto px-4 py-8">
-
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2 flex flex-col gap-6">
             <ImageGallery
               images={sampleVehicle.images || []}
               alt={sampleVehicle.title}
             />
-
             <VehicleDetails vehicle={vehicle} />
           </div>
 
@@ -110,6 +109,7 @@ export default function DetailsPage() {
           </div>
         </div>
       </main>
+      <Footer />
     </div>
   )
 }
