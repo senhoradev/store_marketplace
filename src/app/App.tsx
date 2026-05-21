@@ -4,10 +4,11 @@ import { RegisterPage } from './pages/registerPage';
 import DetailsPage from "./pages/detailsPage";
 import {NotFound} from './pages/NotFound';
 import Home from "./pages/homePage";
-import { CreateVehiclePage } from './pages/createVehiclePage';
+import { CreateAdvertisingPage } from './pages/CreateAdvertisingPage';
 import { ProfilePage } from './pages/profilePage';
 import { authApi, type UserData } from './services/api';
 import {Routes, Route, Navigate, useNavigate} from "react-router";
+import {UpdateAdvertisingPage} from "./pages/UpdateAdvertisingPage";
 
 
 export default function App() {
@@ -62,7 +63,13 @@ export default function App() {
       <Route
         path="/anunciar"
         element={
-          user ? <CreateVehiclePage user={user} /> : <Navigate to="/login" replace />
+          user ? <CreateAdvertisingPage user={user} /> : <Navigate to="/login" replace />
+        }
+      />
+      <Route
+        path="/anunciar/:id/update"
+        element={
+          user ? <UpdateAdvertisingPage user={user} /> : <Navigate to="/login" replace />
         }
       />
       <Route path="/details/:id" element={<DetailsPage />} />
