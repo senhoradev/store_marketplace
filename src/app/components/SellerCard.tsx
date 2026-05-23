@@ -4,10 +4,12 @@ import { Button } from '../components/ui/button'
 import { Avatar, AvatarFallback } from '../components/ui/avatar'
 import { Separator } from '../components/ui/separator'
 import { SellerData } from "@/src/app/pages/detailsPage";
+import { useNavigate } from 'react-router'
 
 
 interface SellerCardProps {
   seller: SellerData
+  vehicleId: string
 }
 
 function getInitials(name: string): string {
@@ -16,9 +18,14 @@ function getInitials(name: string): string {
   return (parts[0].charAt(0) + parts[parts.length - 1].charAt(0)).toUpperCase()
 }
 
-export function SellerCard({ seller }: SellerCardProps) {
+export function SellerCard({ seller, vehicleId }: SellerCardProps) {
   const { fullName, city, state } = seller
   const locationDisplay = city && state ? `${city}, ${state}` : city || state
+  const navigate = useNavigate()
+
+  const handleStartChat = () => {
+    navigate(`/chat?vehicleId=${vehicleId}`)
+  }
 
   return (
     <Card className="border-border">
@@ -51,9 +58,15 @@ export function SellerCard({ seller }: SellerCardProps) {
             <Phone className="size-4" />
             Ver telefone
           </Button>
+
           <Button variant="outline" className="w-full gap-2">
             <MessageCircle className="size-4" />
             Comprar veículo
+          </Button>
+
+          <Button variant="outline" className="w-full gap-2" onClick= {handleStartChat}>
+            <MessageCircle className="size-4" />
+            Conversar com o Vendedor
           </Button>
         </div>
 

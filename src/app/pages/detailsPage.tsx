@@ -104,7 +104,7 @@ export default function DetailsPage() {
 
           <div className="lg:col-span-1">
             <div className="sticky top-8">
-              <SellerCard seller={seller} />
+              <SellerCard seller={seller} vehicleId={id || vehicle.id} />
             </div>
           </div>
         </div>

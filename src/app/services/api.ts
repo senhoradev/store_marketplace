@@ -173,6 +173,42 @@ export interface BecomeSeller {
   city: string;
 }
 
+// --------------- Chat & Message types ---------------
+
+export interface ChatRoom {
+  id: string;
+  vehicleId: string;
+  buyerId: string;
+  sellerId: string;
+  createdAt: string;
+  updatedAt: string;
+  vehicle: {
+    id: string;
+    title: string;
+    price: number;
+  };
+  buyer: {
+    id: string;
+    fullName: string;
+  };
+  seller: {
+    id: string;
+    fullName: string;
+  };
+}
+
+export interface MessageData {
+  id: string;
+  content: string;
+  senderId: string;
+  chatId: string;
+  createdAt: string;
+  sender: {
+    id: string;
+    fullName: string;
+  };
+}
+
 // --------------- Auth API ---------------
 
 export const authApi = {
@@ -219,7 +255,6 @@ export const authApi = {
   deleteMe(): Promise<void> {
     return request<void>('/auth/me', { method: 'DELETE' });
   },
-
   // helpers
   getToken,
   setToken,
@@ -252,3 +287,25 @@ export const vehicleApi = {
     });
   },
 }
+export const messageApi = {
+  /** POST /messages — Inicia ou envia mensagem */
+  sendMessage(payload: { vehicleId: string; content: string; chatId?: string }): Promise<MessageData> {
+    return request<MessageData>('/messages', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    });
+  },
+
+  /** GET /messages/my-chats — lista salas de chat do usuário */
+  getMyChats(): Promise<ChatRoom[]> {
+    return request<ChatRoom[]>('/messages/my-chats', {
+      method: 'GET',
+    });
+  },
+  
+  getChatHistory(chatId: string): Promise<MessageData[]> {
+    return request<MessageData[]>(`/messages/${chatId}`, {
+      method: 'GET',
+    });
+  },
+};

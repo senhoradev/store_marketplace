@@ -8,6 +8,7 @@ import { CreateAdvertisingPage } from './pages/CreateAdvertisingPage';
 import { ProfilePage } from './pages/profilePage';
 import { authApi, type UserData } from './services/api';
 import {Routes, Route, Navigate, useNavigate} from "react-router";
+import { ChatPage } from './pages/chatPage';
 import {UpdateAdvertisingPage} from "./pages/UpdateAdvertisingPage";
 
 
@@ -87,6 +88,7 @@ export default function App() {
            />
         }
       />
+      <Route path="/chat" element={<ChatPage />} />
     </Routes>
   );
 }
