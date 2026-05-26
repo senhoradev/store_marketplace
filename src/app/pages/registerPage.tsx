@@ -1,10 +1,7 @@
 import { useState } from 'react';
-import { carBackgroundB64 } from '../constants';
+import { carBackgroundB64, MCicon, mcqueenbg } from '../constants';
 import { authApi, type RegisterPayload } from '../services/api';
 import { useNavigate } from "react-router";
-
-const keyIconB64 =
-  'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiMzMzMiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cGF0aCBkPSJNMjEgMmwtMiAybS03LjYxIDcuNjFBNS41IDUuNSAwIDAgMCAyLjUgMThjMCAzLjAzIDIuNDcgNS41IDUuNSA1LjVhNS41IDUuNSAwIDAgMCA1LjM5LTMuODlMMjEgOGwyLTItMi0yem0tMTIgN2EyaGFsZiAyaGFsZiAwIDAgMSAwLTVhMmhhbGYgMmhhbGYgMCAwIDEgMCA1eiIvPjwvc3ZnPg==';
 
 interface RegisterPageProps {
   onRegisterSuccess: () => void;
@@ -98,7 +95,8 @@ export function RegisterPage({ onRegisterSuccess }: RegisterPageProps) {
 
   return (
     <div className="min-h-screen w-full relative flex items-center justify-center bg-black bg-no-repeat bg-cover"
-      style={{ backgroundImage: `url(${carBackgroundB64})` }}>
+      style={{ backgroundImage: `url(${mcqueenbg})` }}>
+      {/* style={{ backgroundImage: `url(${carBackgroundB64})` }}> */}
 
       {/* Overlay escuro */}
       <div className="absolute inset-0 bg-black/60" />
@@ -107,17 +105,17 @@ export function RegisterPage({ onRegisterSuccess }: RegisterPageProps) {
       <div className="relative z-10 w-full max-w-lg px-4">
         {/* Brand */}
         <div className="text-center mb-6">
-          <h1 className="text-4xl font-bold text-red-500 flex items-center justify-center gap-2">
+          <h1 className="text-4xl font-bold text-primary flex items-center justify-center gap-2">
             MACHOCAR
-            <img src={keyIconB64} alt="icon" className="w-6 h-6" />
+            <img src={MCicon} alt="icon" className="w-25 h-20" />
           </h1>
-          <p className="text-gray-300 mt-2">Crie sua conta</p>
+          <p className="text-primary-foreground mt-2">Crie sua conta</p>
         </div>
 
         {/* Card */}
-        <div className="bg-red-900/30 backdrop-blur-lg rounded-2xl p-6 shadow-lg border border-red-500/20">
+        <div className="bg-primary rounded-2xl p-6 shadow-lg border border-primary">
           {error && (
-            <div className="bg-red-500/20 text-red-300 p-2 rounded mb-4">
+            <div className="bg-destructive/20 text-destructive p-2 rounded mb-4">
               {error}
             </div>
           )}
@@ -131,7 +129,7 @@ export function RegisterPage({ onRegisterSuccess }: RegisterPageProps) {
           <form onSubmit={handleSubmit} className="space-y-4">
             {/* Nome */}
             <div>
-              <label className="text-sm text-gray-200">Nome Completo</label>
+              <label className="text-sm text-primary-foreground">Nome Completo</label>
               <input
                 type="text"
                 name="fullName"
@@ -145,7 +143,7 @@ export function RegisterPage({ onRegisterSuccess }: RegisterPageProps) {
 
             {/* Email */}
             <div>
-              <label className="text-sm text-gray-200">Email</label>
+              <label className="text-sm text-primary-foreground">Email</label>
               <input
                 type="email"
                 name="email"
@@ -160,7 +158,7 @@ export function RegisterPage({ onRegisterSuccess }: RegisterPageProps) {
             {/* CPF + Data */}
             <div className="flex gap-3">
               <div className="w-1/2">
-                <label className="text-sm text-gray-200">CPF</label>
+                <label className="text-sm text-primary-foreground">CPF</label>
                 <input
                   type="text"
                   value={formData.cpf}
@@ -172,7 +170,7 @@ export function RegisterPage({ onRegisterSuccess }: RegisterPageProps) {
               </div>
 
               <div className="w-1/2">
-                <label className="text-sm text-gray-200">Data de Nascimento</label>
+                <label className="text-sm text-primary-foreground">Data de Nascimento</label>
                 <input
                   type="date"
                   name="birthDate"
@@ -187,7 +185,7 @@ export function RegisterPage({ onRegisterSuccess }: RegisterPageProps) {
             {/* Telefone + Senha */}
             <div className="flex gap-3">
               <div className="w-1/2">
-                <label className="text-sm text-gray-200">Telefone</label>
+                <label className="text-sm text-primary-foreground">Telefone</label>
                 <input
                   type="text"
                   value={formData.telefone}
@@ -199,7 +197,7 @@ export function RegisterPage({ onRegisterSuccess }: RegisterPageProps) {
               </div>
 
               <div className="w-1/2">
-                <label className="text-sm text-gray-200">Senha</label>
+                <label className="text-sm text-primary-foreground">Senha</label>
                 <input
                   type="password"
                   name="password"
@@ -213,8 +211,8 @@ export function RegisterPage({ onRegisterSuccess }: RegisterPageProps) {
             </div>
 
             {/* Checkbox vendedor */}
-            <div className="bg-red-950/50 border border-red-800/30 rounded-lg p-3">
-              <label className="flex items-center gap-2 text-gray-200">
+            <div className="w-full bg-[var(--thirdary-foreground)] border border-primary rounded-lg p-3">
+              <label className="flex items-center gap-2 text-primary-foreground">
                 <input
                   type="checkbox"
                   name="wantToBeSeller"
@@ -231,7 +229,7 @@ export function RegisterPage({ onRegisterSuccess }: RegisterPageProps) {
             {/* Campos vendedor */}
             {formData.wantToBeSeller && (
               <div className="space-y-3">
-                <p className="text-sm text-gray-300">
+                <p className="text-sm text-primary-foreground">
                   Endereço (obrigatório para vendedores)
                 </p>
 
@@ -302,7 +300,7 @@ export function RegisterPage({ onRegisterSuccess }: RegisterPageProps) {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-red-600 hover:bg-red-700 transition rounded-lg py-2 text-white font-semibold"
+              className="w-full bg-[var(--destructive)] hover:bg-[var(--gray)] transition rounded-lg py-2 text-white font-semibold"
             >
               {loading ? "Carregando..." : "Criar Conta"}
             </button>
