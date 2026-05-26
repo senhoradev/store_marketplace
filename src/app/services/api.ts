@@ -1,5 +1,5 @@
 // ============================================================
-// API Service — centraliza todas as chamadas HTTP ao backend
+// API Service - centraliza todas as chamadas HTTP ao backend
 // ============================================================
 
 
@@ -17,6 +17,54 @@ function setToken(token: string): void {
 
 function removeToken(): void {
   localStorage.removeItem('token');
+}
+
+// Mapa de mensagens de erro do backend -> português
+const ERROR_MAP: Record<string, string> = {
+  // campo obrigatório
+  'Full name is required': 'Nome completo é obrigatório.',
+  'Email is required': 'E-mail é obrigatório.',
+  'Password is required': 'Senha é obrigatória.',
+  'CPF is required': 'CPF é obrigatório.',
+  'Birth date is required': 'Data de nascimento é obrigatória.',
+  'Telefone is required': 'Telefone é obrigatório.',
+  'fullName is required': 'Nome completo é obrigatório.',
+  'email is required': 'E-mail é obrigatório.',
+  'password is required': 'Senha é obrigatória.',
+  'cpf is required': 'CPF é obrigatório.',
+  'birthDate is required': 'Data de nascimento é obrigatória.',
+  'telefone is required': 'Telefone é obrigatório.',
+  // duplicatas
+  'CPF already in use': 'CPF já cadastrado.',
+  'Email already in use': 'E-mail já cadastrado.',
+  'Email already exists': 'E-mail já cadastrado.',
+  'CPF already exists': 'CPF já cadastrado.',
+  // autenticação
+  'Invalid credentials': 'E-mail ou senha inválidos.',
+  'Unauthorized': 'Não autorizado. Faça login novamente.',
+  'Token expired': 'Sessão expirada. Faça login novamente.',
+  'User not found': 'Usuário não encontrado.',
+  // vendedor
+  'User is already a seller': 'Você já é um vendedor.',
+  'Already a seller': 'Você já é um vendedor.',
+  // genérico
+  'Internal server error': 'Erro interno no servidor. Tente novamente.',
+  'Bad request': 'Requisição inválida.',
+};
+
+function translateError(msg: string): string {
+  // Busca exata
+  if (ERROR_MAP[msg]) return ERROR_MAP[msg];
+  // Busca case-insensitive
+  const lower = msg.toLowerCase();
+  for (const [key, val] of Object.entries(ERROR_MAP)) {
+    if (lower === key.toLowerCase()) return val;
+  }
+  // Busca parcial (ex: array de erros do backend como "fullName is required, email is required")
+  for (const [key, val] of Object.entries(ERROR_MAP)) {
+    if (lower.includes(key.toLowerCase())) return val;
+  }
+  return msg;
 }
 
 async function request<T>(
@@ -42,11 +90,13 @@ async function request<T>(
   const data = await res.json().catch(() => ({}));
 
   if (!res.ok) {
-    const message =
+    // O backend pode retornar array em "message" (ex: validação class-validator)
+    const raw =
       (data as any)?.message ||
       (data as any)?.error ||
       `Erro ${res.status}`;
-    throw new Error(message);
+    const rawStr = Array.isArray(raw) ? raw[0] : String(raw);
+    throw new Error(translateError(rawStr));
   }
 
   return data as T;
@@ -228,7 +278,7 @@ export const authApi = {
     });
   },
 
-  /** GET /auth/me — retorna dados do usuário autenticado */
+  /** GET /auth/me - retorna dados do usuário autenticado */
   getMe(): Promise<UserData> {
     return request<UserData>('/auth/me', {
       method: 'GET',
@@ -243,7 +293,7 @@ export const authApi = {
     });
   },
 
-  /** PUT /auth/me — atualizar perfil */
+  /** PUT /auth/me - atualizar perfil */
   updateMe(payload: Partial<RegisterPayload>): Promise<UserData> {
     return request<UserData>('/auth/me', {
       method: 'PUT',
@@ -288,7 +338,7 @@ export const vehicleApi = {
   },
 }
 export const messageApi = {
-  /** POST /messages — Inicia ou envia mensagem */
+  /** POST /messages - Inicia ou envia mensagem */
   sendMessage(payload: { vehicleId: string; content: string; chatId?: string }): Promise<MessageData> {
     return request<MessageData>('/messages', {
       method: 'POST',
@@ -296,13 +346,13 @@ export const messageApi = {
     });
   },
 
-  /** GET /messages/my-chats — lista salas de chat do usuário */
+  /** GET /messages/my-chats - lista salas de chat do usuário */
   getMyChats(): Promise<ChatRoom[]> {
     return request<ChatRoom[]>('/messages/my-chats', {
       method: 'GET',
     });
   },
-  
+
   getChatHistory(chatId: string): Promise<MessageData[]> {
     return request<MessageData[]>(`/messages/${chatId}`, {
       method: 'GET',
