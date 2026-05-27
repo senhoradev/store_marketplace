@@ -34,7 +34,7 @@ export function Categories() {
   );
 
   const handleCategoryParams = (categoryName: string) => {
-    navigate(`/category/${categoryName.toLowerCase()}`);
+    navigate(`/category`);
   };
 
   return (
