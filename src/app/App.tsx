@@ -7,7 +7,9 @@ import Home from "./pages/homePage";
 import { CreateVehiclePage } from './pages/createVehiclePage';
 import { CategoryCarsPage } from './pages/categoryVehiclesPage';
 import { ProfilePage } from './pages/profilePage';
-import { authApi, type UserData } from './services/api';
+import { authApi } from './services/api';
+import { UserData } from './services/types';
+
 import {Routes, Route, Navigate, useNavigate} from "react-router";
 
 
