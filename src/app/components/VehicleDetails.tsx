@@ -95,7 +95,7 @@ export function VehicleDetails({ vehicle }: VehicleDetailsProps) {
             <CardTitle className="text-2xl text-balance ">{title}</CardTitle>
             {isOwner && (
               <button
-                onClick={() => navigate("/anunciar")}
+                onClick={() => navigate(`/anunciar/${vehicle.id}/update`)}
                 className="hidden sm:flex items-center gap-1.5 h-9 px-4 rounded-md bg-primary hover:bg-primary/90 transition-colors text-primary-foreground text-sm font-medium"
               >
                 <Pencil  className="size-4"/>

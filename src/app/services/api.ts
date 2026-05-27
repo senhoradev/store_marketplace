@@ -12,6 +12,8 @@ import {
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
+// --------------- helpers ---------------
+
 function getToken(): string | null {
   return localStorage.getItem('token');
 }
@@ -55,6 +57,66 @@ async function request<T>(
   }
 
   return data as T;
+}
+
+export interface UpdateVehiclePayload {
+  id: string;
+  title: string;
+  description: string;
+  price: number;
+  brand?: string;
+  model?: string;
+  version?: string;
+  manufactureYear?: number;
+  modelYear?: number;
+  mileage?: number;
+  fuel?: string;
+  transmission?: string;
+  bodyType?: string;
+  color?: string;
+  doors?: number;
+  finalPlate?: number;
+  fipePrice?: number;
+  acceptsFinancing?: boolean;
+  acceptsTrade?: boolean;
+  city?: string;
+  state?: string;
+}
+
+// --------------- Chat & Message types ---------------
+
+export interface ChatRoom {
+  id: string;
+  vehicleId: string;
+  buyerId: string;
+  sellerId: string;
+  createdAt: string;
+  updatedAt: string;
+  vehicle: {
+    id: string;
+    title: string;
+    price: number;
+  };
+  buyer: {
+    id: string;
+    fullName: string;
+  };
+  seller: {
+    id: string;
+    fullName: string;
+  };
+}
+
+export interface MessageData {
+  id: string;
+  content: string;
+  senderId: string;
+  chatId: string;
+  createdAt: string;
+  sender: {
+    id: string;
+    fullName: string;
+  };
 }
 
 export const authApi = {
@@ -127,4 +189,32 @@ export const vehicleApi = {
       body: JSON.stringify(payload),
     });
   },
+  updateVehicle(payload: UpdateVehiclePayload, id: string): Promise<Vehicle> {
+    return request<Vehicle>(`/vehicles/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(payload),
+    });
+  },
 }
+export const messageApi = {
+  /** POST /messages — Inicia ou envia mensagem */
+  sendMessage(payload: { vehicleId: string; content: string; chatId?: string }): Promise<MessageData> {
+    return request<MessageData>('/messages', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    });
+  },
+
+  /** GET /messages/my-chats — lista salas de chat do usuário */
+  getMyChats(): Promise<ChatRoom[]> {
+    return request<ChatRoom[]>('/messages/my-chats', {
+      method: 'GET',
+    });
+  },
+
+  getChatHistory(chatId: string): Promise<MessageData[]> {
+    return request<MessageData[]>(`/messages/${chatId}`, {
+      method: 'GET',
+    });
+  },
+};
