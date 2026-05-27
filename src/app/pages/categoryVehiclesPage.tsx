@@ -49,21 +49,27 @@ export function CategoryCarsPage() {
     const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
     const [sortBy, setSortBy] = useState('recent')
     const [favorites, setFavorites] = useState<string[]>([])
+    const [searching, setSearching] = useState<boolean>(false)
 
     useEffect(() => {
       vehicleApi.getAllVehicles()
         .then((vehicleResponse) => setVehicles(vehicleResponse.data))
     }, [])
 
+    // Um filtro será aplicado automaticamente sempre que for selecionado.
+    useEffect(() => {
+      handleApplyFilters()
+    }, [filters]);
+
     const handleApplyFilters = () => {
       const params = converterFiltersToString(filters)
       const urlParams = new URLSearchParams({...params});
-      console.log(urlParams)
+      setSearching(true)
       vehicleApi.filterVehicle(urlParams)
         .then(res => {
-
           setVehicles(res.data)
           setShowFilters(false)
+          setSearching(false)
         })
     }
 
@@ -90,7 +96,6 @@ export function CategoryCarsPage() {
             <VehicleFiltersSidebar
               filters={filters}
               onFiltersChange={setFilters}
-              onApplyFilters={handleApplyFilters}
               onClearFilters={handleClearFilters}
             />
           </div>
@@ -243,15 +248,21 @@ export function CategoryCarsPage() {
                   : 'flex flex-col gap-4'
               }
             >
-              {vehicles.map((vehicle) => (
-                <VehicleCard
-                  key={vehicle.id}
-                  vehicle={vehicle}
-                  onFavorite={handleToggleFavorite}
-                  onClick={handleVehicleClick}
-                  isFavorite={favorites.includes(vehicle.id)}
-                />
-              ))}
+              {searching ? (
+                <div>Nenhum carro encontrado com esse filtro</div>
+              ) : (
+                <>
+                  {vehicles.map((vehicle) => (
+                    <VehicleCard
+                      key={vehicle.id}
+                      vehicle={vehicle}
+                      onFavorite={handleToggleFavorite}
+                      onClick={handleVehicleClick}
+                      isFavorite={favorites.includes(vehicle.id)}
+                    />
+                  ))}
+                </>
+              ) }
             </div>
 
             {/* Paginação simples */}

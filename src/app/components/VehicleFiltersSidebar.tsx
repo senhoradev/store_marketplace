@@ -85,7 +85,6 @@ const states = [
 interface VehicleFiltersSidebarProps {
   filters: VehicleFilters
   onFiltersChange: (filters: VehicleFilters) => void
-  onApplyFilters: () => void
   onClearFilters: () => void
   isOpen?: boolean
   onClose?: () => void
@@ -94,7 +93,6 @@ interface VehicleFiltersSidebarProps {
 export function VehicleFiltersSidebar({
   filters,
   onFiltersChange,
-  onApplyFilters,
   onClearFilters,
   isOpen = true,
   onClose,
@@ -608,12 +606,12 @@ export function VehicleFiltersSidebar({
         </Accordion>
       </div>
 
-      {/* Botão de aplicar (fixo na parte inferior) */}
-      <div className="sticky bottom-0 bg-card border-t border-border p-4">
-        <Button onClick={onApplyFilters} className="w-full">
-          Aplicar Filtros
-        </Button>
-      </div>
+      {/*/!* Botão de aplicar (fixo na parte inferior) *!/*/}
+      {/*<div className="sticky bottom-0 bg-card border-t border-border p-4">*/}
+      {/*  <Button onClick={onApplyFilters} className="w-full">*/}
+      {/*    Aplicar Filtros*/}
+      {/*  </Button>*/}
+      {/*</div>*/}
     </aside>
   )
 }
