@@ -81,7 +81,7 @@ export default function App() {
            />
         }
       />
-        <Route path="/category/:category" element={<CategoryCarsPage />} />
+        <Route path="/category" element={<CategoryCarsPage />} />
     </Routes>
   );
 }

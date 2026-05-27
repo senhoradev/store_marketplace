@@ -1,11 +1,16 @@
-// ============================================================
-// API Service — centraliza todas as chamadas HTTP ao backend
-// ============================================================
-
+import {
+  RegisterPayload,
+  AuthResponse,
+  LoginPayload,
+  UserData,
+  BecomeSeller,
+  Vehicle,
+  VehicleResponse,
+  VehicleFilters,
+  CreateVehiclePayload
+} from "./types";
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
-
-// --------------- helpers ---------------
 
 function getToken(): string | null {
   return localStorage.getItem('token');
@@ -51,105 +56,6 @@ async function request<T>(
 
   return data as T;
 }
-
-// --------------- Auth types ---------------
-
-export interface RegisterPayload {
-  fullName: string;
-  email: string;
-  password: string;
-  cpf: string;
-  birthDate: string;       // formato "YYYY-MM-DD"
-  telefone: string;
-  state?: string;
-  city?: string;
-}
-
-export interface LoginPayload {
-  email: string;
-  password: string;
-}
-
-export interface AuthResponse {
-  token: string;
-  user: UserData;
-}
-
-export interface VehicleResponse {
-  page: number;
-  total: number;
-  limit: number;
-  data: Vehicle[] | [];
-}
-
-export interface Vehicle {
-  id: string
-  title: string;
-  description: string;
-  price: number;
-  brand: string;
-  model: string;
-  version: string;
-  manufactureYear: number;
-  modelYear: number;
-  mileage: number;
-  fuel: string;
-  transmission: string;
-  bodyType: string;
-  color: string;
-  doors: number;
-  finalPlate: number;
-  fipePrice?: number;
-  acceptsFinancing?: boolean;
-  acceptsTrade?: boolean;
-  status?: string;
-  city: string;
-  state: string;
-  images?: string[];
-  owner: { fullName: string; id: string };
-}
-
-export interface CreateVehiclePayload {
-  title: string;
-  description: string;
-  price: number;
-  brand?: string;
-  model?: string;
-  version?: string;
-  manufactureYear?: number;
-  modelYear?: number;
-  mileage?: number;
-  fuel?: string;
-  transmission?: string;
-  bodyType?: string;
-  color?: string;
-  doors?: number;
-  finalPlate?: number;
-  fipePrice?: number;
-  acceptsFinancing?: boolean;
-  acceptsTrade?: boolean;
-  city?: string;
-  state?: string;
-}
-
-export interface UserData {
-  id: string;
-  fullName: string;
-  email: string;
-  cpf: string;
-  birthDate: string;
-  telefone: string;
-  state?: string;
-  city?: string;
-  roles: string[];
-}
-
-export interface BecomeSeller {
-  state: string;
-  city: string;
-}
-
-// --------------- Auth API ---------------
 
 export const authApi = {
   /** POST /auth/register */
