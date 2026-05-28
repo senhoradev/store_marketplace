@@ -4,9 +4,12 @@ import { RegisterPage } from './pages/registerPage';
 import DetailsPage from "./pages/detailsPage";
 import {NotFound} from './pages/NotFound';
 import Home from "./pages/homePage";
+import { CategoryCarsPage } from './pages/categoryVehiclesPage';
 import { CreateAdvertisingPage } from './pages/CreateAdvertisingPage';
 import { ProfilePage } from './pages/profilePage';
-import { authApi, type UserData } from './services/api';
+import { authApi } from './services/api';
+import { UserData } from './services/types';
+
 import {Routes, Route, Navigate, useNavigate} from "react-router";
 import { ChatPage } from './pages/chatPage';
 import {UpdateAdvertisingPage} from "./pages/UpdateAdvertisingPage";
@@ -88,6 +91,7 @@ export default function App() {
            />
         }
       />
+        <Route path="/category" element={<CategoryCarsPage />} />
       <Route path="/chat" element={<ChatPage />} />
     </Routes>
   );
