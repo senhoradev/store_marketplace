@@ -19,7 +19,7 @@ export function Hero() {
                 <div className="flex flex-col items-center gap-8 md:flex-row md:justify-between">
                     <div className="max-w-md text-center md:text-left">
                         <h1 className="text-3xl text-white font-bold uppercase leading-tight text-foreground md:text-4xl lg:text-5xl text-balance">
-                            A loja para realizar seus sonhos
+                            A PLATAFORMA QUE REALIZA OS seus sonhos
                         </h1>
                         <p className="mt-4 text-white text-muted-foreground">
                             Encontre o carro perfeito para você. Qualidade, confiança e os melhores preços do mercado.

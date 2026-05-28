@@ -23,7 +23,7 @@ export function ChatPage() {
   const [newMessage, setNewMessage] = useState('')
   const [loadingChats, setLoadingChats] = useState(true)
   const [sending, setSending] = useState(false)
-  
+
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const socketRef = useRef<Socket | null>(null)
 
@@ -51,7 +51,7 @@ export function ChatPage() {
     messageApi.getMyChats()
       .then((res: ChatRoom[]) => {
         setChats(res)
-        
+
         if (vehicleIdFromUrl) {
           const existingChat = res.find(c => c.vehicleId === vehicleIdFromUrl)
           if (existingChat) {
@@ -75,7 +75,7 @@ export function ChatPage() {
     if (!activeChatId) return
 
     setPendingVehicle(null)
-    
+
     messageApi.getChatHistory(activeChatId)
       .then((res: MessageData[]) => setMessages(res))
       .catch((err: any) => console.error(err))
@@ -115,7 +115,7 @@ export function ChatPage() {
     if (!newMessage.trim() || !user) return
 
     let currentVehicleId = vehicleIdFromUrl
-    
+
     if (activeChatId) {
       const currentChat = chats.find(c => c.id === activeChatId)
       if (currentChat) currentVehicleId = currentChat.vehicleId
@@ -130,7 +130,7 @@ export function ChatPage() {
         content: newMessage.trim(),
         chatId: activeChatId || undefined
       })
-      
+
       setMessages((prev) => {
         if (prev.some(m => m.id === sent.id)) return prev;
         return [...prev, sent];
@@ -156,9 +156,9 @@ export function ChatPage() {
   return (
     <div className="min-h-screen bg-background flex flex-col font-sans">
       <Header user={user} />
-      
+
       <main className="container mx-auto px-4 py-6 flex gap-4 max-w-7xl h-[800px] min-h-0 box-border">
-        
+
         {/* barra de conversas */}
         <div className={`w-full md:w-80 border border-border rounded-xl flex flex-col bg-card overflow-hidden h-full max-h-full min-h-0 shrink-0 ${showChatWindow && 'hidden md:flex'}`}>
           <div className="p-4 border-b border-border bg-muted/50 shrink-0">
@@ -166,7 +166,7 @@ export function ChatPage() {
               <MessageSquare className="size-5 text-red-600" /> Minhas Conversas
             </h2>
           </div>
-           {/* Chats laterais */}
+          {/* Chats laterais */}
           <div className="flex-1 overflow-y-auto divide-y divide-border">
             {loadingChats ? (
               <p className="p-4 text-sm text-muted-foreground text-center animate-pulse">Carregando salas...</p>
@@ -180,7 +180,7 @@ export function ChatPage() {
                     <span className="text-xs text-muted-foreground truncate">{pendingVehicle.title}</span>
                   </div>
                 )}
-                 {/* chats ativos*/}
+                {/* chats ativos*/}
                 {chats.map((room) => {
                   const isBuyer = room.buyerId === user?.id
                   const talkTo = isBuyer ? room.seller.fullName : room.buyer.fullName
@@ -199,7 +199,7 @@ export function ChatPage() {
             )}
           </div>
         </div>
-          {/* janela do chat*/}
+        {/* janela do chat*/}
         <div className={`flex-1 border border-border rounded-xl flex flex-col bg-card overflow-hidden h-full max-h-full min-h-0 ${!showChatWindow && 'hidden md:flex'}`}>
           {showChatWindow ? (
             <>
@@ -210,13 +210,13 @@ export function ChatPage() {
                   </button>
                   <div>
                     <h3 className="font-bold text-sm text-foreground">
-                      {activeChat 
+                      {activeChat
                         ? (activeChat.buyerId === user?.id ? activeChat.seller.fullName : activeChat.buyer.fullName)
                         : (pendingVehicle?.owner?.fullName || "Vendedor")}
                     </h3>
                     <p className="text-xs text-muted-foreground flex items-center gap-1 mt-0.5">
-                      <Car className="size-3 text-red-600" /> 
-                      {activeChat ? activeChat.vehicle?.title : pendingVehicle?.title} — 
+                      <Car className="size-3 text-red-600" />
+                      {activeChat ? activeChat.vehicle?.title : pendingVehicle?.title} -
                       <span className="text-red-600 font-medium">
                         {formatCurrency(activeChat ? activeChat.vehicle?.price || 0 : pendingVehicle?.price || 0)}
                       </span>

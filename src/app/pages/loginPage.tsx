@@ -1,10 +1,7 @@
 import { useState } from 'react';
-import { carBackgroundB64 } from '../constants';
+import { carBackgroundB64, MCicon, mcqueenbg } from '../constants';
 import { authApi } from '../services/api';
 import {useNavigate} from "react-router";
-
-const keyIconB64 =
-  'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiMzMzMiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cGF0aCBkPSJNMjEgMmwtMiAybS03LjYxIDcuNjFBNS41IDUuNSAwIDAgMCAyLjUgMThjMCAzLjAzIDIuNDcgNS41IDUuNSA1LjVhNS41IDUuNSAwIDAgMCA1LjM5LTMuODlMMjEgOGwyLTItMi0yem0tMTIgN2EyaGFsZiAyaGFsZiAwIDAgMSAwLTVhMmhhbGYgMmhhbGYgMCAwIDEgMCA1eiIvPjwvc3ZnPg==';
 
 interface LoginPageProps {
   onLoginSuccess: () => void;
@@ -51,8 +48,8 @@ export function LoginPage({ onLoginSuccess }: LoginPageProps) {
 
   return (
     <div className="min-h-screen w-full relative flex items-center justify-center bg-black bg-no-repeat bg-cover"
-         style={{ backgroundImage: `url(${carBackgroundB64})` }}
-    >
+        style={{ backgroundImage: `url(${mcqueenbg})` }}>
+    { /* style={{ backgroundImage: `url(${carBackgroundB64})` }}*/}
 
       {/* Overlay escuro */}
       <div className="absolute inset-0 bg-black/60" />
@@ -61,17 +58,17 @@ export function LoginPage({ onLoginSuccess }: LoginPageProps) {
       <div className="relative z-10 w-full max-w-md px-4">
         {/* Brand */}
         <div className="text-center mb-6">
-          <h1 className="text-4xl font-bold text-red-500 flex items-center justify-center gap-2">
+          <h1 className="text-4xl font-bold text-primary flex items-center justify-center gap-2">
             MACHOCAR
-            <img src={keyIconB64} alt="icon" className="w-6 h-6" />
+            <img src={MCicon} alt="icon" className="w-25 h-20" />
           </h1>
-          <p className="text-gray-300 mt-2">Bem-vindo de volta</p>
+          <p className="text-primary-foreground mt-2">Bem-vindo de volta</p>
         </div>
 
         {/* Card */}
-        <div className="bg-red-900/30 backdrop-blur-lg rounded-2xl p-6 shadow-lg border border-red-500/20">
+        <div className="bg-primary rounded-2xl p-6 shadow-lg border border-primary">
           {error && (
-            <div className="bg-red-500/20 text-red-300 p-2 rounded mb-4">
+            <div className="bg-destructive/20 text-destructive p-2 rounded mb-4">
               {error}
             </div>
           )}
@@ -79,7 +76,7 @@ export function LoginPage({ onLoginSuccess }: LoginPageProps) {
           <form onSubmit={handleSubmit} className="space-y-4">
             {/* Email */}
             <div>
-              <label className="text-sm text-gray-200">Email</label>
+              <label className="text-sm text-primary-foreground">Email</label>
               <input
                 type="email"
                 name="email"
@@ -93,7 +90,7 @@ export function LoginPage({ onLoginSuccess }: LoginPageProps) {
 
             {/* Senha */}
             <div>
-              <label className="text-sm text-gray-200">Senha</label>
+              <label className="text-sm text-primary-foreground">Senha</label>
               <input
                 type="password"
                 name="password"
@@ -106,7 +103,7 @@ export function LoginPage({ onLoginSuccess }: LoginPageProps) {
             </div>
 
             {/* Checkbox */}
-            <div className="flex items-center gap-2 text-gray-200 text-sm">
+            <div className="flex items-center gap-2 text-primary-foreground text-sm">
               <input
                 type="checkbox"
                 name="rememberMe"
@@ -120,7 +117,7 @@ export function LoginPage({ onLoginSuccess }: LoginPageProps) {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-red-600 hover:bg-red-700 transition rounded-lg py-2 text-white font-semibold"
+              className="w-full bg-[var(--destructive)] hover:bg-[var(--gray)] transition rounded-lg py-2 text-white font-semibold"
             >
               {loading ? "Carregando..." : "Entrar"
               }

@@ -17,6 +17,111 @@ import {
   CreditCard,
 } from 'lucide-react';
 
+const SELLER_TERMS = [
+  {
+    title: '§ 1 — Comissão sobre vendas',
+    text: 'A plataforma MachoCar reterá 50% (cinquenta por cento) do valor bruto de cada veículo vendido a título de "taxa de felicidade do sistema". O vendedor receberá os 50% restantes em até 180 dias úteis, podendo ser pago em vales-presente de postos de gasolina parceiros.',
+  },
+  {
+    title: '§ 2 — Requisito do mecânico',
+    text: 'Todo veículo anunciado deverá ser revisado por um mecânico que seja, comprovadamente, sobrinho(a) do proprietário do estabelecimento. Primos de segundo grau serão aceitos apenas mediante carta notariada reconhecendo a amizade familiar.',
+  },
+  {
+    title: '§ 3 — Fotos obrigatórias',
+    text: 'Pelo menos uma foto do anúncio deve ter sido tirada na chuva para "autenticar a pintura". Fotos com arco-íris ao fundo receberão destaque premium gratuito por 3 horas.',
+  },
+  {
+    title: '§ 4 — Uso do nome',
+    text: 'A MachoCar reserva-se o direito de usar o seu primeiro nome em campanhas de marketing, slogans e tatuagens corporativas sem aviso prévio. O vendedor declara que o nome não causa vergonha alheia.',
+  },
+  {
+    title: '§ 5 — Cheiro do veículo',
+    text: 'O veículo deve cheirar a "carro novo" ou, alternativamente, a "pinheiros da floresta". Cheiro de hambúrguer resultará em suspensão temporária da conta por 7 dias. Odores não catalogados serão avaliados por nosso Comitê de Aromas, reunido nas terceiras quintas-feiras do mês.',
+  },
+  {
+    title: '§ 6 — Negociação',
+    text: 'É vedado ao vendedor aceitar qualquer proposta de valor sem antes gritar "FECHADO!" três vezes em voz alta, independentemente do local onde se encontre (reuniões de trabalho, missas, consultas médicas). O descumprimento acarreta multa de R$ 1,00.',
+  },
+  {
+    title: '§ 7 — Suporte ao comprador',
+    text: 'O vendedor compromete-se a enviar uma mensagem de "bom dia" com figurinha de café ao comprador durante os primeiros 30 dias após a venda. A ausência de figurinha implica devolução de 0,5% da comissão retida.',
+  },
+  {
+    title: '§ 8 — Alterações nos termos',
+    text: 'A MachoCar pode alterar estes termos a qualquer momento, inclusive retroativamente. As atualizações serão comunicadas via pombo-correio, ou, na sua ausência, via pressentimento.',
+  },
+];
+
+function SellerTermsModal({ onAccept, onClose }: { onAccept: () => void; onClose: () => void }) {
+  const [accepted, setAccepted] = useState(false);
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      {/* Backdrop */}
+      <div className="absolute inset-0 bg-black/75 backdrop-blur-sm" onClick={onClose} />
+
+      {/* Modal — usa cores do tema do projeto */}
+      <div className="relative z-10 rounded-2xl shadow-2xl w-full max-w-lg mx-auto flex flex-col max-h-[85vh]"
+        style={{ background: 'var(--gray)', border: '1px solid var(--primary)' }}>
+
+        {/* Header */}
+        <div className="flex items-center justify-between px-6 pt-5 pb-3 flex-shrink-0"
+          style={{ borderBottom: '1px solid rgba(135,24,24,0.4)' }}>
+          <div>
+            <h2 className="text-lg font-bold text-white">Termos de Serviço do Vendedor</h2>
+            <p className="text-xs mt-0.5" style={{ color: 'var(--primary-foreground)', opacity: 0.6 }}>MachoCar Ltda. — Versão 4.2.0 (definitiva)</p>
+          </div>
+          <button onClick={onClose} className="text-gray-400 hover:text-white transition-colors">
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+
+        {/* Terms list — scrollable */}
+        <div className="overflow-y-auto flex-1 px-6 py-4 space-y-3 text-sm">
+          {SELLER_TERMS.map((term) => (
+            <div key={term.title} className="rounded-lg p-3"
+              style={{ background: 'rgba(0,0,0,0.35)', border: '1px solid rgba(135,24,24,0.25)' }}>
+              <p className="font-semibold mb-1" style={{ color: 'var(--primary-foreground)' }}>{term.title}</p>
+              <p className="leading-relaxed text-gray-300">{term.text}</p>
+            </div>
+          ))}
+
+          <p className="text-xs text-gray-500 text-center pt-2">
+            Ao aceitar, você declara ter lido, entendido e concordado com todos os itens acima,
+            incluindo os parágrafos que você pulou.
+          </p>
+        </div>
+
+        {/* Footer */}
+        <div className="px-6 py-4 flex-shrink-0 space-y-3"
+          style={{ borderTop: '1px solid rgba(135,24,24,0.4)' }}>
+          <label className="flex items-start gap-3 cursor-pointer group">
+            <input
+              type="checkbox"
+              checked={accepted}
+              onChange={(e) => setAccepted(e.target.checked)}
+              className="mt-0.5 w-4 h-4 flex-shrink-0 cursor-pointer"
+              style={{ accentColor: 'var(--primary)' }}
+            />
+            <span className="text-sm text-gray-300 group-hover:text-white transition-colors">
+              Li e aceito os Termos de Serviço, inclusive as partes que não fazem o menor sentido.
+            </span>
+          </label>
+
+          <button
+            onClick={onAccept}
+            disabled={!accepted}
+            className="w-full py-2.5 rounded-lg font-semibold text-sm text-white transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+            style={{ background: 'var(--primary)' }}
+          >
+            Aceitar e me tornar vendedor
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 const BR_STATES = [
   'AC','AL','AP','AM','BA','CE','DF','ES','GO','MA',
   'MT','MS','MG','PA','PB','PR','PE','PI','RJ','RN',
@@ -179,26 +284,21 @@ export function ProfilePage() {
   };
 
   const handleBecomeSeller = async () => {
-    if (!user || !user.state || !user.city) {
-      setError('Por favor, preencha estado e cidade para se tornar vendedor.');
-      setShowSellerConfirm(false);
-      return;
-    }
-
     setBecomingSeller(true);
     setError('');
     setSuccessMsg('');
+    setShowSellerConfirm(false);
 
     try {
-      await authApi.becomeSeller({
-        state: user.state,
-        city: user.city,
-      });
+      await authApi.becomeSeller(
+        user?.state && user?.city
+          ? { state: user.state, city: user.city }
+          : {},
+      );
 
       const refreshed = await authApi.getMe();
       setUser(refreshed);
       setSuccessMsg('Agora você é um vendedor!');
-      setShowSellerConfirm(false);
     } catch (err: any) {
       setError(err.message || 'Erro ao se tornar vendedor.');
     } finally {
@@ -280,7 +380,7 @@ export function ProfilePage() {
             </div>
             {!isSeller && !editing && (
               <button
-                onClick={() => setShowSellerConfirm(true)}
+                onClick={() => { setError(''); setShowSellerConfirm(true); }}
                 className="mt-3 text-sm text-red-600 hover:text-red-700 font-medium underline underline-offset-2 transition-colors"
               >
                 Quero me tornar um vendedor
@@ -514,41 +614,12 @@ export function ProfilePage() {
         </div>
       )}
 
-      {/* ---- BECOME SELLER MODAL ---- */}
+      {/* ---- BECOME SELLER TERMS MODAL ---- */}
       {showSellerConfirm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center">
-          {/* Backdrop */}
-          <div
-            className="absolute inset-0 bg-black/40"
-            onClick={() => setShowSellerConfirm(false)}
-          />
-          {/* Dialog */}
-          <div className="relative z-10 bg-background border border-border rounded-2xl shadow-2xl p-6 w-full max-w-sm mx-4">
-            <h3 className="text-lg font-semibold text-foreground mb-2">Tornar-se vendedor</h3>
-            <p className="text-sm text-muted-foreground mb-6">
-              Ao se tornar vendedor, você poderá criar anúncios de veículos. Certifique-se de que sua localização (Estado e Cidade) está preenchida corretamente no seu perfil.
-            </p>
-            <div className="flex gap-3 justify-end">
-              <button
-                type="button"
-                onClick={() => setShowSellerConfirm(false)}
-                className="flex items-center gap-2 px-5 py-2 rounded-lg border border-border text-sm text-foreground hover:bg-accent transition-colors"
-              >
-                <X className="w-4 h-4" />
-                Cancelar
-              </button>
-              <button
-                type="button"
-                onClick={handleBecomeSeller}
-                disabled={becomingSeller}
-                className="flex items-center gap-2 px-6 py-2 rounded-lg bg-red-600 hover:bg-red-700 transition-colors text-white text-sm font-semibold disabled:opacity-60"
-              >
-                <Check className="w-4 h-4" />
-                {becomingSeller ? 'Processando...' : 'Confirmar'}
-              </button>
-            </div>
-          </div>
-        </div>
+        <SellerTermsModal
+          onAccept={handleBecomeSeller}
+          onClose={() => setShowSellerConfirm(false)}
+        />
       )}
     </div>
   );
