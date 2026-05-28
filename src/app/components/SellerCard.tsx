@@ -59,12 +59,7 @@ export function SellerCard({ seller, vehicleId }: SellerCardProps) {
             Ver telefone
           </Button>
 
-          <Button variant="outline" className="w-full gap-2">
-            <MessageCircle className="size-4" />
-            Comprar veículo
-          </Button>
-
-          <Button variant="outline" className="w-full gap-2" onClick= {handleStartChat}>
+          <Button variant="outline" className="w-full gap-2" onClick={handleStartChat}>
             <MessageCircle className="size-4" />
             Conversar com o Vendedor
           </Button>

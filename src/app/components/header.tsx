@@ -1,4 +1,4 @@
-import { ChevronDown, Heart, LogOut, Menu, Search, User, X } from "lucide-react";
+import { ChevronDown, Heart, LogOut, Menu, MessageSquare, Search, User, X } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import { MCicon } from '../constants';
@@ -41,6 +41,10 @@ export function Header({user}: HeaderProps) {
 
   const onProfile = () => {
     navigate("/profile");
+  }
+
+  const onMessages = () => {
+    navigate("/chat");
   }
 
   const onFavorites = () => {
@@ -108,6 +112,10 @@ export function Header({user}: HeaderProps) {
                 <DropdownMenuItem onClick={onProfile} className="cursor-pointer">
                   <User className="h-4 w-4" />
                   Perfil
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={onMessages} className="cursor-pointer">
+                  <MessageSquare className="h-4 w-4" />
+                  Mensagens
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={onFavorites} className="cursor-pointer">
                   <Heart className="h-4 w-4" />

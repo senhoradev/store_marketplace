@@ -3,7 +3,7 @@ import { useNavigate } from "react-router";
 import { Header } from '../components/header'
 import { VehicleFiltersSidebar } from '../components/VehicleFiltersSidebar'
 import { VehicleCard } from '../components/VehicleCard'
-import { vehicleApi } from "../services/api";
+import { authApi, vehicleApi } from "../services/api";
 import { SlidersHorizontal, Grid3X3, List } from 'lucide-react'
 import { Button } from '../components/ui/button'
 import {
@@ -56,6 +56,14 @@ export function CategoryCarsPage() {
   useEffect(() => {
     vehicleApi.getAllVehicles()
       .then((vehicleResponse) => setVehicles(vehicleResponse.data))
+  }, [])
+
+  useEffect(() => {
+    if (authApi.isLoggedIn()) {
+      authApi.getMe()
+        .then(setUser)
+        .catch(() => setUser(null))
+    }
   }, [])
 
   // Um filtro será aplicado automaticamente sempre que for selecionado.
