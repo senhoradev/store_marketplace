@@ -135,11 +135,17 @@ export interface UpdateVehiclePayload {
 
 // --------------- Chat & Message types ---------------
 
+export type PurchaseStatus = 'pending' | 'completed' | 'cancelled';
+
 export interface ChatRoom {
   id: string;
   vehicleId: string;
   buyerId: string;
   sellerId: string;
+  /** ID da compra vinculada a este chat (pode ser undefined se ainda não há compra) */
+  purchaseId?: string;
+  /** Status atual da compra vinculada */
+  purchaseStatus?: PurchaseStatus;
   createdAt: string;
   updatedAt: string;
   vehicle: {
@@ -246,6 +252,44 @@ export const vehicleApi = {
     });
   },
 }
+// --------------- Purchase types ---------------
+
+export interface Purchase {
+  id: string;
+  buyerId: string;
+  sellerId: string;
+  vehicleId: string;
+  vehicleTitle?: string;
+  vehiclePrice?: number;
+  status: 'pending' | 'completed' | 'cancelled';
+  createdAt: string;
+}
+
+export const purchaseApi = {
+  /** POST /vehicles/:vehicleId/purchase - Inicia uma compra */
+  startPurchase(vehicleId: string): Promise<{ message: string; data: Purchase }> {
+    return request(`/vehicles/${vehicleId}/purchase`, { method: 'POST' });
+  },
+
+  /** GET /purchases/my-purchases - Compras do comprador */
+  getMyPurchases(): Promise<Purchase[]> {
+    return request('/purchases/my-purchases', { method: 'GET' });
+  },
+
+  /** GET /purchases/my-sales - Vendas do vendedor */
+  getMySales(): Promise<Purchase[]> {
+    return request('/purchases/my-sales', { method: 'GET' });
+  },
+
+  /** PATCH /purchases/:purchaseId/status - Atualiza status (vendedor only) */
+  updatePurchaseStatus(purchaseId: string, status: 'completed' | 'cancelled'): Promise<{ message: string; data: Purchase }> {
+    return request(`/purchases/${purchaseId}/status`, {
+      method: 'PATCH',
+      body: JSON.stringify({ status }),
+    });
+  },
+};
+
 export const messageApi = {
   /** POST /messages - Inicia ou envia mensagem */
   sendMessage(payload: { vehicleId: string; content: string; chatId?: string }): Promise<MessageData> {

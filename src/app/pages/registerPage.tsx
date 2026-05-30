@@ -44,9 +44,9 @@ const TERMS = [
 ];
 
 const BR_STATES = [
-  'AC','AL','AP','AM','BA','CE','DF','ES','GO','MA',
-  'MT','MS','MG','PA','PB','PR','PE','PI','RJ','RN',
-  'RS','RO','RR','SC','SP','SE','TO',
+  'AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA',
+  'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE', 'PI', 'RJ', 'RN',
+  'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO',
 ];
 
 function TermsModal({ onAccept, onClose }: { onAccept: () => void; onClose: () => void }) {
@@ -57,7 +57,7 @@ function TermsModal({ onAccept, onClose }: { onAccept: () => void; onClose: () =
       {/* Backdrop */}
       <div className="absolute inset-0 bg-black/75 backdrop-blur-sm" onClick={onClose} />
 
-      {/* Modal — usa as cores do tema do projeto */}
+      {/* Modal - usa as cores do tema do projeto */}
       <div className="relative z-10 rounded-2xl shadow-2xl w-full max-w-lg mx-auto flex flex-col max-h-[85vh]"
         style={{ background: 'var(--gray)', border: '1px solid var(--primary)' }}>
 
@@ -66,14 +66,14 @@ function TermsModal({ onAccept, onClose }: { onAccept: () => void; onClose: () =
           style={{ borderBottom: '1px solid rgba(135,24,24,0.4)' }}>
           <div>
             <h2 className="text-lg font-bold text-white">Termos de Serviço do Vendedor</h2>
-            <p className="text-xs mt-0.5" style={{ color: 'var(--primary-foreground)', opacity: 0.6 }}>MachoCar Ltda. — Versão 4.2.0 (definitiva)</p>
+            <p className="text-xs mt-0.5" style={{ color: 'var(--primary-foreground)', opacity: 0.6 }}>MachoCar Ltda. - Versão 4.2.0 (definitiva)</p>
           </div>
           <button onClick={onClose} className="text-gray-400 hover:text-white transition-colors">
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        {/* Terms list — scrollable */}
+        {/* Terms list - scrollable */}
         <div className="overflow-y-auto flex-1 px-6 py-4 space-y-3 text-sm">
           {TERMS.map((term) => (
             <div key={term.title} className="rounded-lg p-3"

@@ -13,6 +13,8 @@ import { UserData } from './services/types';
 import {Routes, Route, Navigate, useNavigate} from "react-router";
 import { ChatPage } from './pages/chatPage';
 import {UpdateAdvertisingPage} from "./pages/UpdateAdvertisingPage";
+import { SellerConfirmationPage } from './pages/sellerConfirmationPage';
+import { BuyerConfirmationPage } from './pages/buyerConfirmationPage';
 
 
 export default function App() {
@@ -93,6 +95,8 @@ export default function App() {
       />
         <Route path="/category" element={<CategoryCarsPage />} />
       <Route path="/chat" element={<ChatPage />} />
+      <Route path="/confirmacao-venda" element={<SellerConfirmationPage />} />
+      <Route path="/confirmacao-compra" element={<BuyerConfirmationPage />} />
     </Routes>
   );
 }

@@ -19,35 +19,35 @@ import {
 
 const SELLER_TERMS = [
   {
-    title: '§ 1 — Comissão sobre vendas',
+    title: '§ 1 - Comissão sobre vendas',
     text: 'A plataforma MachoCar reterá 50% (cinquenta por cento) do valor bruto de cada veículo vendido a título de "taxa de felicidade do sistema". O vendedor receberá os 50% restantes em até 180 dias úteis, podendo ser pago em vales-presente de postos de gasolina parceiros.',
   },
   {
-    title: '§ 2 — Requisito do mecânico',
+    title: '§ 2 - Requisito do mecânico',
     text: 'Todo veículo anunciado deverá ser revisado por um mecânico que seja, comprovadamente, sobrinho(a) do proprietário do estabelecimento. Primos de segundo grau serão aceitos apenas mediante carta notariada reconhecendo a amizade familiar.',
   },
   {
-    title: '§ 3 — Fotos obrigatórias',
+    title: '§ 3 - Fotos obrigatórias',
     text: 'Pelo menos uma foto do anúncio deve ter sido tirada na chuva para "autenticar a pintura". Fotos com arco-íris ao fundo receberão destaque premium gratuito por 3 horas.',
   },
   {
-    title: '§ 4 — Uso do nome',
+    title: '§ 4 - Uso do nome',
     text: 'A MachoCar reserva-se o direito de usar o seu primeiro nome em campanhas de marketing, slogans e tatuagens corporativas sem aviso prévio. O vendedor declara que o nome não causa vergonha alheia.',
   },
   {
-    title: '§ 5 — Cheiro do veículo',
+    title: '§ 5 - Cheiro do veículo',
     text: 'O veículo deve cheirar a "carro novo" ou, alternativamente, a "pinheiros da floresta". Cheiro de hambúrguer resultará em suspensão temporária da conta por 7 dias. Odores não catalogados serão avaliados por nosso Comitê de Aromas, reunido nas terceiras quintas-feiras do mês.',
   },
   {
-    title: '§ 6 — Negociação',
+    title: '§ 6 - Negociação',
     text: 'É vedado ao vendedor aceitar qualquer proposta de valor sem antes gritar "FECHADO!" três vezes em voz alta, independentemente do local onde se encontre (reuniões de trabalho, missas, consultas médicas). O descumprimento acarreta multa de R$ 1,00.',
   },
   {
-    title: '§ 7 — Suporte ao comprador',
+    title: '§ 7 - Suporte ao comprador',
     text: 'O vendedor compromete-se a enviar uma mensagem de "bom dia" com figurinha de café ao comprador durante os primeiros 30 dias após a venda. A ausência de figurinha implica devolução de 0,5% da comissão retida.',
   },
   {
-    title: '§ 8 — Alterações nos termos',
+    title: '§ 8 - Alterações nos termos',
     text: 'A MachoCar pode alterar estes termos a qualquer momento, inclusive retroativamente. As atualizações serão comunicadas via pombo-correio, ou, na sua ausência, via pressentimento.',
   },
 ];
@@ -60,7 +60,7 @@ function SellerTermsModal({ onAccept, onClose }: { onAccept: () => void; onClose
       {/* Backdrop */}
       <div className="absolute inset-0 bg-black/75 backdrop-blur-sm" onClick={onClose} />
 
-      {/* Modal — usa cores do tema do projeto */}
+      {/* Modal - usa cores do tema do projeto */}
       <div className="relative z-10 rounded-2xl shadow-2xl w-full max-w-lg mx-auto flex flex-col max-h-[85vh]"
         style={{ background: 'var(--gray)', border: '1px solid var(--primary)' }}>
 
@@ -69,14 +69,14 @@ function SellerTermsModal({ onAccept, onClose }: { onAccept: () => void; onClose
           style={{ borderBottom: '1px solid rgba(135,24,24,0.4)' }}>
           <div>
             <h2 className="text-lg font-bold text-white">Termos de Serviço do Vendedor</h2>
-            <p className="text-xs mt-0.5" style={{ color: 'var(--primary-foreground)', opacity: 0.6 }}>MachoCar Ltda. — Versão 4.2.0 (definitiva)</p>
+            <p className="text-xs mt-0.5" style={{ color: 'var(--primary-foreground)', opacity: 0.6 }}>MachoCar Ltda. - Versão 4.2.0 (definitiva)</p>
           </div>
           <button onClick={onClose} className="text-gray-400 hover:text-white transition-colors">
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        {/* Terms list — scrollable */}
+        {/* Terms list - scrollable */}
         <div className="overflow-y-auto flex-1 px-6 py-4 space-y-3 text-sm">
           {SELLER_TERMS.map((term) => (
             <div key={term.title} className="rounded-lg p-3"
@@ -123,9 +123,9 @@ function SellerTermsModal({ onAccept, onClose }: { onAccept: () => void; onClose
 }
 
 const BR_STATES = [
-  'AC','AL','AP','AM','BA','CE','DF','ES','GO','MA',
-  'MT','MS','MG','PA','PB','PR','PE','PI','RJ','RN',
-  'RS','RO','RR','SC','SP','SE','TO',
+  'AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA',
+  'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE', 'PI', 'RJ', 'RN',
+  'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO',
 ];
 
 const inputClass =
@@ -141,7 +141,7 @@ function formatCPF(cpf: string) {
 }
 
 function formatDate(iso: string) {
-  if (!iso) return '—';
+  if (!iso) return '-';
   const [y, m, d] = iso.split('T')[0].split('-');
   return `${d}/${m}/${y}`;
 }
@@ -417,7 +417,7 @@ export function ProfilePage() {
                   value={
                     user.city && user.state
                       ? `${user.city}, ${user.state}`
-                      : user.state || user.city || '—'
+                      : user.state || user.city || '-'
                   }
                 />
               </div>
