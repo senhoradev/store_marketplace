@@ -5,6 +5,8 @@ import { Avatar, AvatarFallback } from '../components/ui/avatar'
 import { Separator } from '../components/ui/separator'
 import { SellerData } from "@/src/app/pages/detailsPage";
 import { useNavigate } from 'react-router'
+import { purchaseApi } from '../services/api'
+import { useState } from 'react'
 
 
 interface SellerCardProps {
@@ -22,9 +24,18 @@ export function SellerCard({ seller, vehicleId }: SellerCardProps) {
   const { fullName, city, state } = seller
   const locationDisplay = city && state ? `${city}, ${state}` : city || state
   const navigate = useNavigate()
+  const [starting, setStarting] = useState(false)
 
-  const handleStartChat = () => {
-    navigate(`/chat?vehicleId=${vehicleId}`)
+  const handleStartChat = async () => {
+    setStarting(true)
+    try {
+      await purchaseApi.startPurchase(vehicleId)
+    } catch (err) {
+      console.error(err)
+    } finally {
+      setStarting(false)
+      navigate(`/chat?vehicleId=${vehicleId}`)
+    }
   }
 
   return (
@@ -59,9 +70,9 @@ export function SellerCard({ seller, vehicleId }: SellerCardProps) {
             Ver telefone
           </Button>
 
-          <Button variant="outline" className="w-full gap-2" onClick={handleStartChat}>
+          <Button variant="outline" className="w-full gap-2" onClick={handleStartChat} disabled={starting}>
             <MessageCircle className="size-4" />
-            Conversar com o Vendedor
+            {starting ? 'Iniciando...' : 'Conversar com o Vendedor'}
           </Button>
         </div>
 

@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef, useCallback } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { useSearchParams, useNavigate } from 'react-router'
 import { Header } from '../components/header'
 import { Footer } from '../components/footer'
@@ -11,7 +11,7 @@ import {
   type MessageData,
   type UserData,
   type Vehicle,
-  type Purchase,
+  type PurchaseStatus,
 } from '../services/api'
 import {
   Send,
@@ -20,41 +20,86 @@ import {
   ArrowLeft,
   CheckCircle,
   XCircle,
-  Clock,
-  ExternalLink,
-  AlertTriangle,
+  Loader2,
 } from 'lucide-react'
 import { formatCurrency } from '../services/utils'
 import { io, Socket } from 'socket.io-client'
 
 const SOCKET_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000'
-const PURCHASE_POLL_MS = 5000 // atualiza status a cada 5s
 
-// ─── Status Badge ────────────────────────────────────────────────────────────
-function StatusBadge({ status }: { status: Purchase['status'] }) {
-  if (status === 'pending')
-    return (
-      <span className="inline-flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 rounded-full bg-amber-100 text-amber-700 border border-amber-200">
-        <Clock className="size-3" />
-        Pendente
-      </span>
-    )
-  if (status === 'completed')
-    return (
-      <span className="inline-flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-700 border border-emerald-200">
-        <CheckCircle className="size-3" />
-        Concluída
-      </span>
-    )
+// ─── Toast ─────────────────────────────────────────────────────────────────────
+
+type ToastVariant = 'success' | 'error' | 'info'
+
+interface ToastItem {
+  id: number
+  message: string
+  variant: ToastVariant
+  visible: boolean
+}
+
+const TOAST_ICONS: Record<ToastVariant, string> = {
+  success: '✓',
+  error: '✕',
+  info: 'ℹ',
+}
+
+const TOAST_STYLES: Record<ToastVariant, string> = {
+  success: 'bg-green-600 text-white shadow-green-900/30',
+  error: 'bg-red-600 text-white shadow-red-900/30',
+  info: 'bg-slate-700 text-white shadow-slate-900/30',
+}
+
+function ToastStack({ toasts }: { toasts: ToastItem[] }) {
+  if (toasts.length === 0) return null
   return (
-    <span className="inline-flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 rounded-full bg-red-100 text-red-700 border border-red-200">
-      <XCircle className="size-3" />
-      Cancelada
+    <div
+      aria-live="polite"
+      className="fixed bottom-6 right-6 z-[9999] flex flex-col gap-3 pointer-events-none"
+    >
+      {toasts.map((t) => (
+        <div
+          key={t.id}
+          role="status"
+          style={{
+            transition: 'opacity 300ms ease, transform 300ms ease',
+            opacity: t.visible ? 1 : 0,
+            transform: t.visible ? 'translateY(0)' : 'translateY(16px)',
+          }}
+          className={`flex items-start gap-3 px-4 py-3 rounded-xl shadow-xl max-w-sm pointer-events-auto ${
+            TOAST_STYLES[t.variant]
+          }`}
+        >
+          <span className="mt-0.5 text-base font-bold shrink-0 leading-none">
+            {TOAST_ICONS[t.variant]}
+          </span>
+          <p className="text-sm leading-snug">{t.message}</p>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+// ─── Status badge ──────────────────────────────────────────────────────────────
+
+function PurchaseStatusBadge({ status }: { status: PurchaseStatus | undefined }) {
+  if (!status || status === 'pending') return null
+
+  const cfg = {
+    completed: { label: 'Venda Concluída', cls: 'bg-green-100 text-green-700 border-green-300' },
+    cancelled: { label: 'Venda Cancelada', cls: 'bg-red-100 text-red-700 border-red-300' },
+  } as const
+
+  const { label, cls } = cfg[status]
+  return (
+    <span className={`text-xs font-semibold px-2 py-0.5 rounded-full border ${cls}`}>
+      {label}
     </span>
   )
 }
 
-// ─── Main Component ──────────────────────────────────────────────────────────
+// ─── Component ─────────────────────────────────────────────────────────────────
+
 export function ChatPage() {
   const navigate = useNavigate()
   const [searchParams, setSearchParams] = useSearchParams()
@@ -70,23 +115,22 @@ export function ChatPage() {
   const [loadingChats, setLoadingChats] = useState(true)
   const [sending, setSending] = useState(false)
 
-  // Purchase state
-  const [purchase, setPurchase] = useState<Purchase | null>(null)
-  const [loadingPurchase, setLoadingPurchase] = useState(false)
-  const [updatingStatus, setUpdatingStatus] = useState(false)
+  // ── Estado dos botões de ação do vendedor ──────────────────────────────────
+  const [actionLoading, setActionLoading] = useState<'completed' | 'cancelled' | null>(null)
+  const [actionError, setActionError] = useState<string | null>(null)
 
-  // Modal de confirmação do vendedor
+  // ── Modal de confirmação ───────────────────────────────────────────────────
   const [showConfirmModal, setShowConfirmModal] = useState(false)
   const [pendingAction, setPendingAction] = useState<'completed' | 'cancelled' | null>(null)
 
-  // Toast de sucesso
-  const [successToast, setSuccessToast] = useState<string | null>(null)
+  // ── Toast notifications ────────────────────────────────────────────────────
+  const [toasts, setToasts] = useState<ToastItem[]>([])
+  const toastCounterRef = useRef(0)
 
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const socketRef = useRef<Socket | null>(null)
-  const pollRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
-  // ── Auth ─────────────────────────────────────────────────────────────────
+  // ── Autenticação ───────────────────────────────────────────────────────────
   useEffect(() => {
     if (!authApi.isLoggedIn()) {
       navigate('/login')
@@ -95,26 +139,42 @@ export function ChatPage() {
     authApi.getMe().then(setUser).catch(() => navigate('/login'))
   }, [])
 
-  // ── Socket ───────────────────────────────────────────────────────────────
+  // ── Conexão WebSocket ──────────────────────────────────────────────────────
   useEffect(() => {
     socketRef.current = io(SOCKET_URL)
+
+    // Listener: outro usuário atualizou o status da compra
+    socketRef.current.on(
+      'purchase_status_updated',
+      (payload: { chatId: string; status: PurchaseStatus }) => {
+        setChats((prev) =>
+          prev.map((c) =>
+            c.id === payload.chatId ? { ...c, purchaseStatus: payload.status } : c,
+          ),
+        )
+      },
+    )
+
     return () => {
       socketRef.current?.disconnect()
     }
-  }, [activeChatId])
+  }, [])
 
-  // ── Carrega chats ─────────────────────────────────────────────────────────
+  // ── Lista de chats ─────────────────────────────────────────────────────────
   useEffect(() => {
-    messageApi.getMyChats()
+    messageApi
+      .getMyChats()
       .then((res: ChatRoom[]) => {
         setChats(res)
+
         if (vehicleIdFromUrl) {
-          const existingChat = res.find(c => c.vehicleId === vehicleIdFromUrl)
+          const existingChat = res.find((c) => c.vehicleId === vehicleIdFromUrl)
           if (existingChat) {
             setActiveChatId(existingChat.id)
             setSearchParams({ id: existingChat.id })
           } else {
-            vehicleApi.getVehicleById(vehicleIdFromUrl)
+            vehicleApi
+              .getVehicleById(vehicleIdFromUrl)
               .then(setPendingVehicle)
               .catch((err: any) => console.error(err))
           }
@@ -126,49 +186,15 @@ export function ChatPage() {
       .finally(() => setLoadingChats(false))
   }, [vehicleIdFromUrl])
 
-  // ── Busca purchase associado ao chat ativo ────────────────────────────────
-  const fetchPurchaseForChat = useCallback(async (chat: ChatRoom, currentUser: UserData) => {
-    try {
-      // Busca nas compras do usuário o que bate com este vehicleId e este chat
-      let purchases: Purchase[] = []
-      const isBuyer = chat.buyerId === currentUser.id
-      if (isBuyer) {
-        purchases = await purchaseApi.getMyPurchases()
-      } else {
-        purchases = await purchaseApi.getMySales()
-      }
-      const found = purchases.find(p => p.vehicleId === chat.vehicleId)
-      setPurchase(found ?? null)
-    } catch {
-      setPurchase(null)
-    }
-  }, [])
-
-  useEffect(() => {
-    if (!activeChatId || !user) return
-    const chat = chats.find(c => c.id === activeChatId)
-    if (!chat) return
-
-    // Busca imediata
-    setLoadingPurchase(true)
-    fetchPurchaseForChat(chat, user).finally(() => setLoadingPurchase(false))
-
-    // Polling para atualização em tempo real do status
-    pollRef.current = setInterval(() => {
-      fetchPurchaseForChat(chat, user)
-    }, PURCHASE_POLL_MS)
-
-    return () => {
-      if (pollRef.current) clearInterval(pollRef.current)
-    }
-  }, [activeChatId, user, chats, fetchPurchaseForChat])
-
-  // ── Mensagens ─────────────────────────────────────────────────────────────
+  // ── Histórico + listener de mensagens ─────────────────────────────────────
   useEffect(() => {
     if (!activeChatId) return
-    setPendingVehicle(null)
 
-    messageApi.getChatHistory(activeChatId)
+    setPendingVehicle(null)
+    setActionError(null)
+
+    messageApi
+      .getChatHistory(activeChatId)
       .then((res: MessageData[]) => setMessages(res))
       .catch((err: any) => console.error(err))
 
@@ -176,7 +202,7 @@ export function ChatPage() {
     socketRef.current?.on('receive_message', (incomingMessage: MessageData) => {
       if (incomingMessage.chatId === activeChatId) {
         setMessages((prev) => {
-          if (prev.some(m => m.id === incomingMessage.id)) return prev
+          if (prev.some((m) => m.id === incomingMessage.id)) return prev
           return [...prev, incomingMessage]
         })
       }
@@ -187,31 +213,32 @@ export function ChatPage() {
     }
   }, [activeChatId])
 
-  // ── Scroll automático ────────────────────────────────────────────────────
+  // ── Scroll automático ──────────────────────────────────────────────────────
   useEffect(() => {
     if (messages.length > 0) {
       messagesEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
     }
   }, [messages])
 
-  // ── Selecionar chat ───────────────────────────────────────────────────────
+  // ── Selecionar chat ────────────────────────────────────────────────────────
   const handleSelectChat = (id: string) => {
     setPendingVehicle(null)
-    setPurchase(null)
     setActiveChatId(id)
     navigate(`/chat?id=${id}`, { replace: true })
   }
 
-  // ── Enviar mensagem ───────────────────────────────────────────────────────
+  // ── Enviar mensagem ────────────────────────────────────────────────────────
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!newMessage.trim() || !user) return
 
     let currentVehicleId = vehicleIdFromUrl
+
     if (activeChatId) {
-      const currentChat = chats.find(c => c.id === activeChatId)
+      const currentChat = chats.find((c) => c.id === activeChatId)
       if (currentChat) currentVehicleId = currentChat.vehicleId
     }
+
     if (!currentVehicleId) return
 
     setSending(true)
@@ -223,7 +250,7 @@ export function ChatPage() {
       })
 
       setMessages((prev) => {
-        if (prev.some(m => m.id === sent.id)) return prev
+        if (prev.some((m) => m.id === sent.id)) return prev
         return [...prev, sent]
       })
       setNewMessage('')
@@ -240,57 +267,101 @@ export function ChatPage() {
     }
   }
 
-  // ── Atualizar status (vendedor) ───────────────────────────────────────────
-  const handleClickStatusAction = (action: 'completed' | 'cancelled') => {
+  // ── Toast helper ───────────────────────────────────────────────────────────
+  const showToast = (message: string, variant: ToastVariant = 'info', duration = 4000) => {
+    const id = ++toastCounterRef.current
+    // Adiciona toast invisível (para animação de entrada)
+    setToasts((prev) => [...prev, { id, message, variant, visible: false }])
+    // Torna visível no próximo frame
+    setTimeout(() => {
+      setToasts((prev) => prev.map((t) => (t.id === id ? { ...t, visible: true } : t)))
+    }, 20)
+    // Inicia saída
+    setTimeout(() => {
+      setToasts((prev) => prev.map((t) => (t.id === id ? { ...t, visible: false } : t)))
+    }, duration)
+    // Remove do DOM após animação
+    setTimeout(() => {
+      setToasts((prev) => prev.filter((t) => t.id !== id))
+    }, duration + 350)
+  }
+
+  // ── Ação do vendedor: abrir modal de confirmação ───────────────────────────
+  const handleSellerAction = (action: 'completed' | 'cancelled') => {
     setPendingAction(action)
     setShowConfirmModal(true)
   }
 
-  const handleConfirmStatus = async () => {
-    if (!pendingAction || !purchase) return
+  // ── Ação do vendedor: confirmar e chamar API ───────────────────────────────
+  const handleConfirmAction = async () => {
+    if (!activeChat?.purchaseId || !pendingAction) return
+
+    const actionSnapshot = pendingAction
     setShowConfirmModal(false)
-    setUpdatingStatus(true)
+    setActionLoading(actionSnapshot)
+    setActionError(null)
+    setPendingAction(null)
+
     try {
-      const res = await purchaseApi.updatePurchaseStatus(purchase.id, pendingAction)
-      setPurchase(res.data)
+      await purchaseApi.updatePurchaseStatus(activeChat.purchaseId, actionSnapshot)
 
-      // Refetch chats após mudança de status (backend pode cancelar concorrentes)
-      messageApi.getMyChats().then(setChats)
+      // 1. Atualização imediata do estado local
+      setChats((prev) =>
+        prev.map((c) =>
+          c.id === activeChatId ? { ...c, purchaseStatus: actionSnapshot } : c,
+        ),
+      )
 
-      if (pendingAction === 'completed') {
-        showToast('Venda concluída com sucesso! 🎉')
+      // 2. Notifica o outro usuário via Socket.io (tempo real)
+      socketRef.current?.emit('purchase_status_updated', {
+        chatId: activeChatId,
+        status: actionSnapshot,
+      })
+
+      // 3. Feedback visual de sucesso (Toast)
+      if (actionSnapshot === 'completed') {
+        showToast(
+          'Venda concluída com sucesso! O status do veículo foi alterado para vendido.',
+          'success',
+        )
       } else {
-        showToast('Venda cancelada.')
+        showToast('Intenção de compra cancelada. O comprador foi notificado.', 'info')
       }
     } catch (err: any) {
-      console.error(err)
-      showToast('Erro ao atualizar status. Tente novamente.')
+      const msg = err?.message || 'Erro ao atualizar status. Tente novamente.'
+      setActionError(msg)
+      showToast(msg, 'error')
     } finally {
-      setUpdatingStatus(false)
-      setPendingAction(null)
+      setActionLoading(null)
     }
   }
 
-  const showToast = (msg: string) => {
-    setSuccessToast(msg)
-    setTimeout(() => setSuccessToast(null), 4000)
-  }
-
-  // ── Helpers ───────────────────────────────────────────────────────────────
-  const activeChat = chats.find(c => c.id === activeChatId)
+  // ── Dados derivados ────────────────────────────────────────────────────────
+  const activeChat = chats.find((c) => c.id === activeChatId)
   const showChatWindow = activeChat || pendingVehicle
-  const isBuyer = activeChat ? activeChat.buyerId === user?.id : false
-  const isSeller = activeChat ? activeChat.sellerId === user?.id : false
 
-  // ── INTERFACE ─────────────────────────────────────────────────────────────
+  const isSeller = !!(activeChat && user && activeChat.sellerId === user.id)
+  const isBuyer = !!(activeChat && user && activeChat.buyerId === user.id)
+  const isPurchasePending = activeChat?.purchaseStatus === 'pending'
+  const hasPurchase = !!activeChat?.purchaseId
+  // Botões visíveis apenas se: sou o vendedor, há compra vinculada e status é "pending"
+  const showSellerActions = isSeller && hasPurchase && isPurchasePending
+  // Badge visível para o comprador quando há compra pendente
+  const showBuyerPendingBadge = isBuyer && hasPurchase && isPurchasePending
+  const purchaseResolved =
+    activeChat?.purchaseStatus === 'completed' || activeChat?.purchaseStatus === 'cancelled'
+
+  // ── INTERFACE ──────────────────────────────────────────────────────────────
   return (
     <div className="min-h-screen bg-background flex flex-col font-sans">
       <Header user={user} />
 
       <main className="container mx-auto px-4 py-6 flex gap-4 max-w-7xl h-[800px] min-h-0 box-border">
 
-        {/* ── Barra lateral de conversas ─────────────────────────────────── */}
-        <div className={`w-full md:w-80 border border-border rounded-xl flex flex-col bg-card overflow-hidden h-full max-h-full min-h-0 shrink-0 ${showChatWindow && 'hidden md:flex'}`}>
+        {/* Barra lateral de conversas */}
+        <div
+          className={`w-full md:w-80 border border-border rounded-xl flex flex-col bg-card overflow-hidden h-full max-h-full min-h-0 shrink-0 ${showChatWindow && 'hidden md:flex'}`}
+        >
           <div className="p-4 border-b border-border bg-muted/50 shrink-0">
             <h2 className="font-bold text-lg flex items-center gap-2 text-foreground">
               <MessageSquare className="size-5 text-red-600" /> Minhas Conversas
@@ -299,28 +370,55 @@ export function ChatPage() {
 
           <div className="flex-1 overflow-y-auto divide-y divide-border">
             {loadingChats ? (
-              <p className="p-4 text-sm text-muted-foreground text-center animate-pulse">Carregando salas...</p>
+              <p className="p-4 text-sm text-muted-foreground text-center animate-pulse">
+                Carregando salas...
+              </p>
             ) : chats.length === 0 && !pendingVehicle ? (
-              <p className="p-4 text-sm text-muted-foreground text-center">Nenhum chat iniciado ainda.</p>
+              <p className="p-4 text-sm text-muted-foreground text-center">
+                Nenhum chat iniciado ainda.
+              </p>
             ) : (
               <>
                 {pendingVehicle && (
                   <div className="w-full p-4 text-left flex flex-col gap-1 bg-red-50/20 border-r-4 border-red-400 opacity-70 animate-pulse">
-                    <span className="font-semibold text-sm text-foreground">{pendingVehicle.owner?.fullName || 'Vendedor'}</span>
-                    <span className="text-xs text-muted-foreground truncate">{pendingVehicle.title}</span>
+                    <span className="font-semibold text-sm text-foreground">
+                      {pendingVehicle.owner?.fullName || 'Vendedor'}
+                    </span>
+                    <span className="text-xs text-muted-foreground truncate">
+                      {pendingVehicle.title}
+                    </span>
                   </div>
                 )}
+
                 {chats.map((room) => {
-                  const isBuyerRoom = room.buyerId === user?.id
-                  const talkTo = isBuyerRoom ? room.seller.fullName : room.buyer.fullName
+                  const isBuyer = room.buyerId === user?.id
+                  const talkTo = isBuyer ? room.seller.fullName : room.buyer.fullName
                   return (
                     <button
                       key={room.id}
                       onClick={() => handleSelectChat(room.id)}
-                      className={`w-full p-4 text-left flex flex-col gap-1 transition-colors hover:bg-muted/60 ${room.id === activeChatId ? 'bg-red-50/40 border-r-4 border-red-600' : ''}`}
+                      className={`w-full p-4 text-left flex flex-col gap-1 transition-colors hover:bg-muted/60 ${
+                        room.id === activeChatId
+                          ? 'bg-red-50/40 border-r-4 border-red-600'
+                          : ''
+                      }`}
                     >
                       <span className="font-semibold text-sm text-foreground">{talkTo}</span>
-                      <span className="text-xs text-muted-foreground truncate">{room.vehicle?.title || 'Veículo'}</span>
+                      <span className="text-xs text-muted-foreground truncate">
+                        {room.vehicle?.title || 'Veículo'}
+                      </span>
+                      {/* Mini badge de status na lista */}
+                      {room.purchaseStatus && room.purchaseStatus !== 'pending' && (
+                        <span
+                          className={`text-[10px] font-medium mt-0.5 ${
+                            room.purchaseStatus === 'completed'
+                              ? 'text-green-600'
+                              : 'text-red-500'
+                          }`}
+                        >
+                          {room.purchaseStatus === 'completed' ? '✓ Concluída' : '✗ Cancelada'}
+                        </span>
+                      )}
                     </button>
                   )
                 })}
@@ -329,154 +427,155 @@ export function ChatPage() {
           </div>
         </div>
 
-        {/* ── Janela do chat ─────────────────────────────────────────────── */}
-        <div className={`flex-1 border border-border rounded-xl flex flex-col bg-card overflow-hidden h-full max-h-full min-h-0 ${!showChatWindow && 'hidden md:flex'}`}>
+        {/* Janela do chat */}
+        <div
+          className={`flex-1 border border-border rounded-xl flex flex-col bg-card overflow-hidden h-full max-h-full min-h-0 ${!showChatWindow && 'hidden md:flex'}`}
+        >
           {showChatWindow ? (
             <>
-              {/* Header do chat */}
-              <div className="p-4 border-b border-border bg-muted/30 flex items-center justify-between shrink-0">
-                <div className="flex items-center gap-3">
-                  <button onClick={() => navigate('/chat')} className="md:hidden p-1 text-muted-foreground hover:text-foreground">
+              {/* ── Cabeçalho do chat ── */}
+              <div className="p-4 border-b border-border bg-muted/30 flex items-center justify-between shrink-0 gap-3 flex-wrap">
+                <div className="flex items-center gap-3 min-w-0">
+                  <button
+                    onClick={() => navigate('/chat')}
+                    className="md:hidden p-1 text-muted-foreground hover:text-foreground shrink-0"
+                  >
                     <ArrowLeft className="size-5" />
                   </button>
-                  <div>
-                    <h3 className="font-bold text-sm text-foreground">
+                  <div className="min-w-0">
+                    <h3 className="font-bold text-sm text-foreground truncate">
                       {activeChat
-                        ? (activeChat.buyerId === user?.id ? activeChat.seller.fullName : activeChat.buyer.fullName)
-                        : (pendingVehicle?.owner?.fullName || 'Vendedor')}
+                        ? activeChat.buyerId === user?.id
+                          ? activeChat.seller.fullName
+                          : activeChat.buyer.fullName
+                        : pendingVehicle?.owner?.fullName || 'Vendedor'}
                     </h3>
+                    {/* Badge de status da compra */}
+                    {activeChat?.purchaseStatus && (
+                      <PurchaseStatusBadge status={activeChat.purchaseStatus} />
+                    )}
                   </div>
                 </div>
 
-                {/* Status badge */}
-                {purchase && !loadingPurchase && (
-                  <StatusBadge status={purchase.status} />
+                {/* ── Barra de ações do VENDEDOR ── */}
+                {showSellerActions && (
+                  <div className="flex items-center gap-2 shrink-0">
+                    <button
+                      id="btn-concluir-venda"
+                      onClick={() => handleSellerAction('completed')}
+                      disabled={!!actionLoading}
+                      className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg bg-green-600 hover:bg-green-700 text-white transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+                      title="Concluir a venda desta negociação"
+                    >
+                      {actionLoading === 'completed' ? (
+                        <Loader2 className="size-3.5 animate-spin" />
+                      ) : (
+                        <CheckCircle className="size-3.5" />
+                      )}
+                      Concluir Venda
+                    </button>
+
+                    <button
+                      id="btn-cancelar-venda"
+                      onClick={() => handleSellerAction('cancelled')}
+                      disabled={!!actionLoading}
+                      className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg bg-red-600 hover:bg-red-700 text-white transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+                      title="Cancelar esta negociação"
+                    >
+                      {actionLoading === 'cancelled' ? (
+                        <Loader2 className="size-3.5 animate-spin" />
+                      ) : (
+                        <XCircle className="size-3.5" />
+                      )}
+                      Cancelar Venda
+                    </button>
+                  </div>
                 )}
-                {loadingPurchase && (
-                  <span className="text-xs text-muted-foreground animate-pulse">Carregando...</span>
+
+                {/* ── Badge de status para o COMPRADOR (compra pendente) ── */}
+                {showBuyerPendingBadge && (
+                  <div className="flex items-center gap-2 shrink-0">
+                    <span className="flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg bg-amber-100 text-amber-700 border border-amber-300">
+                      <Loader2 className="size-3.5 animate-spin" />
+                      Aguardando vendedor
+                    </span>
+                  </div>
+                )}
+
+                {/* Badge e botão de detalhes quando compra já foi resolvida */}
+                {purchaseResolved && (
+                  <div className="flex items-center gap-3 shrink-0">
+                    <PurchaseStatusBadge status={activeChat?.purchaseStatus} />
+                    <button
+                      onClick={() => navigate(isSeller ? '/confirmacao-venda' : '/confirmacao-compra')}
+                      className="px-3 py-1.5 text-xs font-semibold rounded-lg bg-secondary text-foreground hover:bg-muted-foreground/20 transition-colors border border-border"
+                    >
+                      {isSeller ? 'Ver Detalhes da Venda' : 'Ver Detalhes da Compra'}
+                    </button>
+                  </div>
                 )}
               </div>
 
-              {/* Mini vehicle info */}
+              {/* Erro da ação */}
+              {actionError && (
+                <div className="mx-4 mt-2 px-3 py-2 text-xs text-red-700 bg-red-50 border border-red-200 rounded-md">
+                  {actionError}
+                </div>
+              )}
+
+              {/* ── Info do veículo ── */}
               {(activeChat || pendingVehicle) && (
-                <div className="flex items-center gap-4 p-4 border-b border-border bg-muted/20 shrink-0">
-                  <Car className="size-6 text-primary shrink-0" />
-                  <div className="flex-1 min-w-0">
-                    <h4 className="font-medium text-sm text-foreground truncate">
+                <div className="flex items-center gap-4 p-4 border-b border-border bg-muted/20 rounded-b-lg shadow-sm">
+                  <Car className="size-6 text-primary" />
+                  <div className="flex-1">
+                    <h4 className="font-medium text-sm text-foreground">
                       {activeChat ? activeChat.vehicle?.title : pendingVehicle?.title}
                     </h4>
                     <p className="text-xs text-muted-foreground">
-                      {formatCurrency(activeChat ? activeChat.vehicle?.price || 0 : pendingVehicle?.price || 0)}
+                      {formatCurrency(
+                        activeChat
+                          ? activeChat.vehicle?.price || 0
+                          : pendingVehicle?.price || 0,
+                      )}
                     </p>
                   </div>
                 </div>
               )}
 
-              {/* ── Barra de ações da compra ──────────────────────────────── */}
-              {purchase && activeChat && (
-                <div className="shrink-0 border-b border-border bg-card px-4 py-3">
-
-                  {/* Vendedor com compra PENDENTE: botões de aceitar/cancelar */}
-                  {isSeller && purchase.status === 'pending' && (
-                    <div className="flex flex-wrap items-center gap-2">
-                      <span className="text-xs text-muted-foreground mr-auto">Ação da venda:</span>
-                      <button
-                        onClick={() => handleClickStatusAction('completed')}
-                        disabled={updatingStatus}
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md bg-emerald-600 hover:bg-emerald-700 text-white transition-colors disabled:opacity-50"
-                      >
-                        <CheckCircle className="size-3.5" />
-                        Concluir venda
-                      </button>
-                      <button
-                        onClick={() => handleClickStatusAction('cancelled')}
-                        disabled={updatingStatus}
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md bg-red-100 hover:bg-red-200 text-red-700 border border-red-200 transition-colors disabled:opacity-50"
-                      >
-                        <XCircle className="size-3.5" />
-                        Cancelar venda
-                      </button>
-                    </div>
-                  )}
-
-                  {/* Vendedor com compra CONCLUÍDA: botão de ver detalhes */}
-                  {isSeller && purchase.status === 'completed' && (
-                    <div className="flex flex-wrap items-center gap-3">
-                      <div className="flex items-center gap-1.5 text-xs text-emerald-700 font-medium">
-                        <CheckCircle className="size-3.5" />
-                        Venda concluída!
-                      </div>
-                      <button
-                        onClick={() => navigate('/confirmacao-venda')}
-                        className="ml-auto inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md bg-[#871818] hover:bg-[#6b1010] text-white transition-colors"
-                      >
-                        <ExternalLink className="size-3.5" />
-                        Ver detalhes da venda
-                      </button>
-                    </div>
-                  )}
-
-                  {/* Vendedor com compra CANCELADA */}
-                  {isSeller && purchase.status === 'cancelled' && (
-                    <div className="flex items-center gap-1.5 text-xs text-red-600 font-medium">
-                      <XCircle className="size-3.5" />
-                      Venda cancelada.
-                    </div>
-                  )}
-
-                  {/* Comprador com compra CONCLUÍDA: botão de ver detalhes */}
-                  {isBuyer && purchase.status === 'completed' && (
-                    <div className="flex flex-wrap items-center gap-3">
-                      <div className="flex items-center gap-1.5 text-xs text-emerald-700 font-medium">
-                        <CheckCircle className="size-3.5" />
-                        Compra confirmada pelo vendedor!
-                      </div>
-                      <button
-                        onClick={() => navigate('/confirmacao-compra')}
-                        className="ml-auto inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md bg-[#871818] hover:bg-[#6b1010] text-white transition-colors"
-                      >
-                        <ExternalLink className="size-3.5" />
-                        Ver detalhes da compra
-                      </button>
-                    </div>
-                  )}
-
-                  {/* Comprador com compra CANCELADA */}
-                  {isBuyer && purchase.status === 'cancelled' && (
-                    <div className="flex items-center gap-1.5 text-xs text-red-600 font-medium">
-                      <XCircle className="size-3.5" />
-                      Esta compra foi cancelada.
-                    </div>
-                  )}
-
-                  {/* Comprador com compra PENDENTE: aguardando */}
-                  {isBuyer && purchase.status === 'pending' && (
-                    <div className="flex items-center gap-1.5 text-xs text-amber-700 font-medium">
-                      <Clock className="size-3.5" />
-                      Aguardando confirmação do vendedor...
-                    </div>
-                  )}
-                </div>
-              )}
-
-              {/* ── Mensagens ─────────────────────────────────────────────── */}
+              {/* ── Mensagens ── */}
               <div className="flex-1 p-4 overflow-y-auto bg-muted/10 space-y-3 h-0 min-h-0">
                 {activeChatId && messages.length === 0 && (
-                  <p className="text-center text-xs text-muted-foreground py-4">Carregando histórico...</p>
+                  <p className="text-center text-xs text-muted-foreground py-4">
+                    Carregando histórico...
+                  </p>
                 )}
                 {!activeChatId && (
                   <p className="text-center text-xs text-muted-foreground py-8 border border-dashed border-border rounded-lg bg-card max-w-sm mx-auto mt-4">
-                    Envie uma mensagem abaixo para iniciar a conversa sobre este veículo.
+                    Envie uma mensagem abaixo para iniciar a conversa sobre este veículo. Nenhuma
+                    sala foi criada ainda.
                   </p>
                 )}
                 {messages.map((msg) => {
                   const isMe = msg.senderId === user?.id
                   return (
                     <div key={msg.id} className={`flex ${isMe ? 'justify-end' : 'justify-start'}`}>
-                      <div className={`max-w-[75%] rounded-lg px-3 py-2 text-sm shadow-sm ${isMe ? 'bg-red-600 text-white rounded-br-none' : 'bg-secondary text-foreground rounded-bl-none'}`}>
+                      <div
+                        className={`max-w-[75%] rounded-lg px-3 py-2 text-sm shadow-sm ${
+                          isMe
+                            ? 'bg-red-600 text-white rounded-br-none'
+                            : 'bg-secondary text-foreground rounded-bl-none'
+                        }`}
+                      >
                         <p className="leading-relaxed break-words">{msg.content}</p>
-                        <span className={`text-[10px] block text-right mt-1 ${isMe ? 'text-red-100' : 'text-muted-foreground'}`}>
-                          {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                        <span
+                          className={`text-[10px] block text-right mt-1 ${
+                            isMe ? 'text-red-100' : 'text-muted-foreground'
+                          }`}
+                        >
+                          {new Date(msg.createdAt).toLocaleTimeString([], {
+                            hour: '2-digit',
+                            minute: '2-digit',
+                          })}
                         </span>
                       </div>
                     </div>
@@ -485,20 +584,24 @@ export function ChatPage() {
                 <div ref={messagesEndRef} />
               </div>
 
-              {/* ── Input de mensagem ─────────────────────────────────────── */}
+              {/* ── Entrada de texto ── */}
               <div className="p-3 border-t border-border bg-card shrink-0">
                 <form onSubmit={handleSendMessage} className="flex gap-2">
                   <input
                     type="text"
                     value={newMessage}
                     onChange={(e) => setNewMessage(e.target.value)}
-                    placeholder="Digite sua mensagem..."
-                    className="flex-1 rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-600/20 focus:border-red-600"
-                    disabled={sending}
+                    placeholder={
+                      purchaseResolved
+                        ? 'Esta negociação foi encerrada.'
+                        : 'Digite sua mensagem...'
+                    }
+                    className="flex-1 rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-600/20 focus:border-red-600 disabled:opacity-60"
+                    disabled={sending || purchaseResolved}
                   />
                   <button
                     type="submit"
-                    disabled={sending || !newMessage.trim()}
+                    disabled={sending || !newMessage.trim() || purchaseResolved}
                     className="bg-red-600 hover:bg-red-700 transition-colors text-white p-2 rounded-md disabled:opacity-50 flex items-center justify-center"
                   >
                     <Send className="size-4" />
@@ -517,50 +620,89 @@ export function ChatPage() {
 
       <Footer />
 
-      {/* ── Modal de Confirmação do Vendedor ─────────────────────────────── */}
+      {/* ── Modal de confirmação ── */}
       {showConfirmModal && pendingAction && (
-        <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
-          <div className="bg-card w-full max-w-sm rounded-xl shadow-2xl border border-border overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="modal-title"
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+          onClick={(e) => {
+            // Fecha ao clicar no backdrop
+            if (e.target === e.currentTarget) {
+              setShowConfirmModal(false)
+              setPendingAction(null)
+            }
+          }}
+        >
+          <div className="bg-card w-full max-w-md rounded-2xl shadow-2xl border border-border overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+            {/* Faixa colorida de contexto */}
+            <div
+              className={`h-1.5 w-full ${
+                pendingAction === 'completed' ? 'bg-green-500' : 'bg-red-500'
+              }`}
+            />
+
             <div className="p-6">
-              <div className={`flex items-center justify-center size-12 rounded-full mx-auto mb-4 ${pendingAction === 'completed' ? 'bg-emerald-100 text-emerald-600' : 'bg-red-100 text-red-600'}`}>
-                {pendingAction === 'completed'
-                  ? <CheckCircle className="size-6" />
-                  : <AlertTriangle className="size-6" />}
+              {/* Ícone + Título */}
+              <div className="flex items-center gap-3 mb-3">
+                <span
+                  className={`flex items-center justify-center size-10 rounded-full shrink-0 ${
+                    pendingAction === 'completed'
+                      ? 'bg-green-100 text-green-600'
+                      : 'bg-red-100 text-red-600'
+                  }`}
+                >
+                  {pendingAction === 'completed' ? (
+                    <CheckCircle className="size-5" />
+                  ) : (
+                    <XCircle className="size-5" />
+                  )}
+                </span>
+                <h3 id="modal-title" className="text-base font-bold text-foreground">
+                  {pendingAction === 'completed'
+                    ? 'Confirmar conclusão da venda'
+                    : 'Confirmar cancelamento da venda'}
+                </h3>
               </div>
-              <h3 className="text-lg font-bold text-foreground mb-2 text-center">
-                {pendingAction === 'completed' ? 'Concluir Venda?' : 'Cancelar Venda?'}
-              </h3>
-              <p className="text-sm text-muted-foreground text-center">
+
+              {/* Mensagem exata conforme requisito */}
+              <p className="text-sm text-muted-foreground leading-relaxed">
                 {pendingAction === 'completed'
-                  ? 'Tem certeza que deseja concluir esta venda? O veículo será marcado como vendido e as demais propostas serão canceladas automaticamente.'
-                  : 'Tem certeza que deseja cancelar esta venda? Esta ação não pode ser desfeita.'}
+                  ? 'Deseja confirmar a venda deste veículo? O status será atualizado para concluído e o comprador será notificado em tempo real.'
+                  : 'Deseja realmente cancelar esta intenção de compra? Esta ação não pode ser desfeita e o comprador será notificado.'}
               </p>
             </div>
-            <div className="bg-muted/40 p-4 flex justify-end gap-3 border-t border-border">
+
+            <div className="bg-muted/40 px-6 py-4 flex justify-end gap-3 border-t border-border">
               <button
-                onClick={() => { setShowConfirmModal(false); setPendingAction(null) }}
-                className="px-4 py-2 text-sm font-medium text-foreground bg-background border border-border rounded-md hover:bg-muted transition-colors"
+                id="btn-modal-voltar"
+                onClick={() => {
+                  setShowConfirmModal(false)
+                  setPendingAction(null)
+                }}
+                className="px-4 py-2 text-sm font-medium text-foreground bg-background border border-border rounded-lg hover:bg-muted transition-colors"
               >
                 Voltar
               </button>
               <button
-                onClick={handleConfirmStatus}
-                disabled={updatingStatus}
-                className={`px-4 py-2 text-sm font-medium text-white rounded-md transition-colors disabled:opacity-60 ${pendingAction === 'completed' ? 'bg-emerald-600 hover:bg-emerald-700' : 'bg-red-600 hover:bg-red-700'}`}
+                id="btn-confirmar-acao"
+                onClick={handleConfirmAction}
+                className={`px-5 py-2 text-sm font-semibold text-white rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${
+                  pendingAction === 'completed'
+                    ? 'bg-green-600 hover:bg-green-700 focus-visible:ring-green-500'
+                    : 'bg-red-600 hover:bg-red-700 focus-visible:ring-red-500'
+                }`}
               >
-                {updatingStatus ? 'Processando...' : 'Confirmar'}
+                {pendingAction === 'completed' ? 'Sim, concluir venda' : 'Sim, cancelar'}
               </button>
             </div>
           </div>
         </div>
       )}
 
-      {/* ── Toast de sucesso ──────────────────────────────────────────────── */}
-      {successToast && (
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-foreground text-background text-sm font-medium px-5 py-3 rounded-full shadow-xl animate-in fade-in slide-in-from-bottom-4 duration-300">
-          {successToast}
-        </div>
-      )}
+      {/* ── Toast stack ── */}
+      <ToastStack toasts={toasts} />
     </div>
   )
 }

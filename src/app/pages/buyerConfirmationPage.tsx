@@ -1,7 +1,8 @@
-import { useState } from 'react'
-import { Link } from 'react-router'
+import { useState, useEffect } from 'react'
+import { Link, useNavigate } from 'react-router'
 import { Header } from '../components/header'
 import { Footer } from '../components/footer'
+import { authApi, type UserData } from '../services/api'
 import {
   CheckCircle2,
   Star,
@@ -64,10 +65,20 @@ function StarRating({
 
 // ─── Main Page ──────────────────────────────────────────────────────────────
 export function BuyerConfirmationPage() {
+  const navigate = useNavigate()
+  const [user, setUser] = useState<UserData | null>(null)
   const [rating, setRating] = useState(0)
   const [feedback, setFeedback] = useState('')
   const [submitted, setSubmitted] = useState(false)
   const [copied, setCopied] = useState(false)
+
+  useEffect(() => {
+    if (!authApi.isLoggedIn()) {
+      navigate('/login')
+      return
+    }
+    authApi.getMe().then(setUser).catch(() => navigate('/login'))
+  }, [navigate])
 
   const discountCode = 'MACHOCAR10'
 
@@ -85,7 +96,7 @@ export function BuyerConfirmationPage() {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      <Header user={null} />
+      <Header user={user} />
 
       {/* Hero Section */}
       <section className="relative bg-[#871818] overflow-hidden">
