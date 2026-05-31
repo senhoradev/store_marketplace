@@ -50,7 +50,9 @@ export function PurchaseDetailsPage() {
           }
         }
       })
-      .catch(console.error)
+      .catch(() => {
+        // Silently handle error - loading state will be set to false
+      })
       .finally(() => setLoading(false))
   }, [vehicleId])
 

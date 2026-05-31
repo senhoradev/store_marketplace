@@ -176,13 +176,17 @@ export function ChatPage() {
             vehicleApi
               .getVehicleById(vehicleIdFromUrl)
               .then(setPendingVehicle)
-              .catch((err: any) => console.error(err))
+              .catch(() => {
+                // Silently handle - vehicle not found
+              })
           }
         } else if (!activeChatId && res.length > 0) {
           setActiveChatId(res[0].id)
         }
       })
-      .catch((err: any) => console.error(err))
+      .catch(() => {
+        // Silently handle - will show empty chat list
+      })
       .finally(() => setLoadingChats(false))
   }, [vehicleIdFromUrl])
 
@@ -196,7 +200,9 @@ export function ChatPage() {
     messageApi
       .getChatHistory(activeChatId)
       .then((res: MessageData[]) => setMessages(res))
-      .catch((err: any) => console.error(err))
+      .catch(() => {
+        // Silently handle - will show empty messages
+      })
 
     socketRef.current?.emit('join_chat', { chatId: activeChatId })
     socketRef.current?.on('receive_message', (incomingMessage: MessageData) => {
@@ -260,8 +266,8 @@ export function ChatPage() {
         navigate(`/chat?id=${sent.chatId}`, { replace: true })
         messageApi.getMyChats().then(setChats)
       }
-    } catch (err) {
-      console.error(err)
+    } catch {
+      // Silently handle error
     } finally {
       setSending(false)
     }

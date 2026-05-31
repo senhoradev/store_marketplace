@@ -83,8 +83,8 @@ export default function DetailsPage() {
             setVehicle(res)
             setSeller({ ...seller, ...res.owner})
           })
-      } catch (e) {
-        console.log(e)
+      } catch {
+        // Silently handle error - will use sample data as fallback
       }
     }
   }, [id]);

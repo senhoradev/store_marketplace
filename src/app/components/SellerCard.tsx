@@ -30,8 +30,8 @@ export function SellerCard({ seller, vehicleId }: SellerCardProps) {
     setStarting(true)
     try {
       await purchaseApi.startPurchase(vehicleId)
-    } catch (err) {
-      console.error(err)
+    } catch {
+      // Silently handle error - will navigate to chat regardless
     } finally {
       setStarting(false)
       navigate(`/chat?vehicleId=${vehicleId}`)

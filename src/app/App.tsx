@@ -46,16 +46,6 @@ export default function App() {
       });
   };
 
-  const handleRegisterSuccess = () => {
-    authApi
-      .getMe()
-      .then((userData) => {
-        setUser(userData);
-      })
-      .catch(() => {
-      });
-  };
-
   const handleLogout = () => {
     authApi.removeToken();
     setUser(null);
