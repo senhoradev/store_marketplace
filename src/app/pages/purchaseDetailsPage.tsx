@@ -7,7 +7,7 @@ import {
   type UserData, type Vehicle, type Purchase
 } from '../services/api'
 import { ArrowLeft, Car, MessageSquare, Star, Tag } from 'lucide-react'
-import { formatCurrency } from '../services/utils'
+import { formatCurrency } from '../utils'
 
 export function PurchaseDetailsPage() {
   const [searchParams] = useSearchParams()

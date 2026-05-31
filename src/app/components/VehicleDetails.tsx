@@ -16,7 +16,7 @@ import {
 import {Card, CardContent, CardHeader, CardTitle} from '../components/ui/card'
 import {Badge} from '../components/ui/badge'
 import {Separator} from '../components/ui/separator'
-import {formatCurrency, formatNumber} from '../services/utils'
+import {formatCurrency, formatNumber} from '../utils'
 import {authApi, UserData, Vehicle} from "../../app/services/api";
 import {useEffect, useState} from "react";
 import { useNavigate } from "react-router";

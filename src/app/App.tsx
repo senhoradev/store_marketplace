@@ -1,20 +1,20 @@
 import { useState, useEffect } from 'react';
 import {LoginPage} from './pages/loginPage';
-import { RegisterPage } from './pages/registerPage';
+import { RegisterPage } from './pages/RegisterPage';
 import DetailsPage from "./pages/detailsPage";
 import {NotFound} from './pages/NotFound';
 import Home from "./pages/homePage";
 import { CategoryCarsPage } from './pages/categoryVehiclesPage';
 import { CreateAdvertisingPage } from './pages/CreateAdvertisingPage';
-import { ProfilePage } from './pages/profilePage';
+import { ProfilePage } from './pages/ProfilePage';
 import { authApi } from './services/api';
 import { UserData } from './services/types';
 
 import {Routes, Route, Navigate, useNavigate} from "react-router";
 import { ChatPage } from './pages/chatPage';
 import {UpdateAdvertisingPage} from "./pages/UpdateAdvertisingPage";
-import { SellerConfirmationPage } from './pages/sellerConfirmationPage';
-import { BuyerConfirmationPage } from './pages/buyerConfirmationPage';
+import { SellerConfirmationPage } from './pages/SellerConfirmationPage';
+import { BuyerConfirmationPage } from './pages/BuyerConfirmationPage';
 
 
 export default function App() {

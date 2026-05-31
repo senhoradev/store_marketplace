@@ -10,13 +10,7 @@ import {
   DropdownMenuTrigger,
 } from "../components/ui/dropdown-menu";
 import { authApi } from "../../app/services/api";
-
-export interface UserData {
-  fullName: string;
-  state?: string;
-  city?: string;
-  roles?: string[];
-}
+import type { UserData } from "../services/types";
 
 type HeaderProps = {
   user: UserData | null;
