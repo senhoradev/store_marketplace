@@ -10,6 +10,9 @@ import {
   CreateVehiclePayload
 } from "./types";
 
+// Re-export types for backwards compatibility
+export type { RegisterPayload, AuthResponse, LoginPayload, UserData, BecomeSeller, Vehicle, VehicleResponse, VehicleFilters, CreateVehiclePayload } from "./types";
+
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
 // --------------- helpers ---------------
